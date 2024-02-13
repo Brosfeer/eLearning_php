@@ -3,12 +3,11 @@ include 'dbCon.php';
 session_start();
 
 
-$user_id = $_SESSION["user_id"];
+if (isset($_SESSION["user_id"])) {
 
+    $user_id = $_SESSION["user_id"];
 
-if ($user_id) {
-
-    echo "the user id are: $user_id";
+    echo "the user_id =$user_id";
     $getInfo = mysqli_prepare($con, "SELECT User_Name, E_mail, title, Description, course_id, courses_image, Duration FROM coursesProfileDetails WHERE user_id=?");
     mysqli_stmt_bind_param($getInfo, "s", $user_id);
     mysqli_stmt_execute($getInfo);
@@ -27,22 +26,23 @@ if ($user_id) {
 
     // عرض البيانات حسب الفهرس
 
-    foreach ($data as $index => $row) {
-        echo "<tr>";
-        echo "<td>" . $row['User_Name'] . "</td>";
-        echo "<td>" . $row['E_mail'] . "</td>";
+    foreach ($data as $index => $row);
+    //  {
+    //     echo "<tr>";
+    //     echo "<td>" . $row['User_Name'] . "</td>";
+    //     echo "<td>" . $row['E_mail'] . "</td>";
 
-        echo "</tr>";
+    //     echo "</tr>";
 
-        // العرض في <div> حسب الفهرس المحدد
-        if ($index == 2) { // الفهرس المحدد
-            // echo "<div>title: " . $row['title'] . "</div>";
-            echo "<div>Description: " . $row['Description'] . "</div>";
-            echo "<div>course_id: " . $row['course_id'] . "</div>";
-            echo "<div>courses_image: " . $row['courses_image'] . "</div>";
-            echo "<div>Duration: " . $row['Duration'] . "</div>";
-        }
-    }
+    //     // العرض في <div> حسب الفهرس المحدد
+    //     if ($index == 2) { // الفهرس المحدد
+    //         echo "<div>title: " . $row['title'] . "</div>";
+    //         echo "<div>Description: " . $row['Description'] . "</div>";
+    //         echo "<div>course_id: " . $row['course_id'] . "</div>";
+    //         echo "<div>courses_image: " . $row['courses_image'] . "</div>";
+    //         echo "<div>Duration: " . $row['Duration'] . "</div>";
+    //     }
+    // }
     echo "</table>";
     if (isset($_POST['submit'])) {
 
@@ -62,6 +62,9 @@ if ($user_id) {
         //          INSERT INTO courses (title, Description, Duration, category_id, instructor_id)
         // VALUES ('عنوان الدورة', 'وصف الدورة', 'مدة الدورة', 1, 1);
     }
+} else {
+    $loginPage = "Login.php";
+    echo "<script>window.location.href='$loginPage';</script>";
 }
 ?>
 <!DOCTYPE html>
@@ -157,7 +160,17 @@ if ($user_id) {
                 </div>
                 <a href="contact.html" class="nav-item nav-link">Contact</a>
             </div>
-            <a href="Login.html" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">Join Now<i class="fa fa-arrow-right ms-3"></i></a>
+            <?php
+            if (isset($_SESSION["user_id"])) {
+                $user_id = $_SESSION["user_id"];
+
+                if (!$user_id) {
+                    echo "<a href='Login.php' class='btn btn-primary py-4 px-lg-5 d-none d-lg-block'>Join Now<i class='fa fa-arrow-right ms-3'></i></a>";
+                }
+            } else {
+                echo "<a href='Login.php' class='btn btn-primary py-4 px-lg-5 d-none d-lg-block'>Join Now<i class='fa fa-arrow-right ms-3'></i></a>";
+            }
+            ?>
         </div>
     </nav>
     <!-- Navbar End -->
@@ -205,6 +218,9 @@ if ($user_id) {
             <h1 class="mb-5">Your Courese</h1>
             </div<br>
         </div>
+    <!--
+    divs of your courses
+    -->
         <div class="row g-4 justify-content-center">
             <div class="col-lg-4 col-md-6 wow fadeInUp hoverable" data-wow-delay="0.1s">
                 <div class="course-item bg-light">

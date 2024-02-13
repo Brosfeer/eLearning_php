@@ -43,7 +43,7 @@ require "../header.html";
             <input type="submit" class="submit-log" name="submit" value="تسجيل الدخول">
         </form>
         <p id="error-message"><?php include 'validat.php'?></p>
-        <p>Don't have an account? <a href="SignUp.html">Sign up</a></p>
+        <p>Don't have an account? <a href="SignUp.php">Sign up</a></p>
     </div>
     <!-- Carousel End -->
 </body>

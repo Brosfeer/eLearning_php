@@ -1,134 +1,5 @@
 <?php
-
-
-//***********************************************************************************
-//****************************START VREATE SESSION***********************************
-session_start();
-//***********************************************************************************
-//****************************END VREATE SESSION*************************************
-
-
-//***********************************************************************************
-//****************************START INCLUED FILES************************************
-require "../header.html";
-include 'dbCon.php';
-//***********************************************************************************
-//**************************** END INCLUED FILES*************************************
-
-if (isset($_POST['submit'])) {
-
-    //***********************************************************************************
-    //****************************GET DATA FROM  THE FORM********************************
-    // echo "the chick";
-    //geting data from the form to php page
-    $user_name = $_POST['user_name'];
-    $email = $_POST['email'];
-    $age = $_POST['age'];
-    $address = $_POST['address'];
-    $phone_no = $_POST['phone_no'];
-    $password = $_POST['password'];
-    $confirm_password    = $_POST['confirm_password'];
-    // echo $user_name . "<br>" . $email . " <br>" . $phone_no . " <br>" . $address . " <br>" . $password . " <br>" . $confirm_password;
-    //***********************************************************************************
-    //***********************************************************************************
-
-    //***********************************************************************************
-    //*************************Define  expression for validation*************************
-    // Define regular expression for validation
-
-    //***********************************************************************************
-    //***********************************************************************************
-    $restrictedCharsRegex = '/["\*\s0-9]/'; // Matches double quote, asterisk, space, or digit
-    $containsRestrictedCharsName = preg_match($restrictedCharsRegex, $user_name);
-    $emailRegex = '/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/';
-    $phoneNumberRegex = '/^[0-9]{9}$/';
-    $passwordRegex = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/';
-    //***********************************************************************************
-    //*************************Start validationcin variblue*****************************
-    $containsRestrictedCharsName = preg_match($restrictedCharsRegex, $user_name);
-    $isValidEmail = preg_match($emailRegex, $email);
-    $isValidPassword = preg_match($passwordRegex, $password);
-    $isConfirmPasswordMatched = ($password === $confirm_password);
-    $containsRestrictedCharsAddress = !preg_match($restrictedCharsRegex, $address);
-    $isValidPhoneNumber = preg_match($phoneNumberRegex, $phone_no);
-    // // Validate name
-    // $containsRestrictedCharsOrNumbersName = !preg_match($restrictedCharsAndNumbersRegex, $user_name);
-    // // Validate email
-    // $isValidEmail = preg_match($emailRegex, $email);
-    // // Validate password
-    // $isValidPassword = preg_match($passwordRegex, $password);
-    // // Validate confirm password
-    // $isConfirmPasswordMatched = ($password === $confirm_password);
-    // // Validate address
-    // $containsRestrictedCharsOrNumbersAddress = !preg_match($restrictedCharsAndNumbersRegex, $address);
-    // // Validate phone number
-    // $containsPhoneNumberRegex = !preg_match($phoneNumberRegex, $phone_no);
-    //***********************************************************************************
-    //***************************END validation of the input*****************************
-
-
-    //***********************************************************************************
-    //****************************insert data into table users **************************
-    $sql_users = "INSERT INTO users(User_Name, Password, E_mail) VALUES (?, ?, ?)";
-    $userStatement = $con->prepare($sql_users);
-    $userStatement->bind_param("sss", $user_name, $password, $email);
-    $userStatement->execute();
-    //***********************************************************************************
-    //**************************END insert data into table users ************************
-
-
-    //***********************************************************************************
-    //****************************Generate user_id session ******* **********************
-    global $user_id;
-    $user_id =12;
-    try {
-        // Get the generated user_id
-        $generatedKeys = $userStatement->insert_id;
-        if ($generatedKeys > 0) {
-             $user_id = $generatedKeys;
-            // echo "The User Id From the GetCon Servlet: " . $user_id;
-
-            // Create a session
-
-            $_SESSION["user_id"] = $user_id;
-            // echo $user_id;
-            // buildSession(request, email);
-        } else {
-            throw new mysqli_sql_exception("Failed to retrieve the generated user_id.");
-        }
-    } catch (mysqli_sql_exception $e) {
-        // Rollback the transaction in case of any error
-        if ($con != null) {
-            $con->Rollback();
-        }
-        throw $e;
-    }
-    //***********************************************************************************
-    //****************************END Generate user_id session **************************
-
-
-    //***********************************************************************************
-    //****************************Insert data into 'students' table *********************
-    $sql_students = "INSERT INTO students(user_id,age, address, phone_no) VALUES (?, ?, ?, ?)";
-    $studentStatement = $con->prepare($sql_students);
-    $studentStatement->bind_param("isss", $user_id, $age, $address, $phone_no);
-    $studentStatement->execute();
-
-    if ($studentStatement->affected_rows > 0) {
-        
-        echo "تم إدخال البيانات بنجاح.";
-        $nextPage = "courses.php";
-        echo "<script>window.location.href='$nextPage';</script>";
-        exit;
-    } else {
-        echo "حدث خطأ أثناء إدخال البيانات.";
-    }
-    // Commit the transaction
-    $con->commit();
-}
-//***********************************************************************************
-//****************************END Insert data into 'students' table *****************
-
+require "controller/siUp.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -160,8 +31,30 @@ if (isset($_POST['submit'])) {
     <link href="../css/style.css" rel="stylesheet">
 
 </head>
-<!-- ***********************************************************************************-->
-<!-- ********************End include files of SignUp page***********************************-->
+<!-- *********************************End include files of SignUp page**************************************************-->
+<!-- ***************************show input field for specfied user****************************-->
+<script>
+    function showFields(role) {
+        var teacherFields = document.getElementById('teacherFields');
+        var studentFields = document.getElementById('studentFields');
+        var adminFields = document.getElementById('adminFields');
+
+        // Hide all fields by default
+        teacherFields.style.display = 'none';
+        studentFields.style.display = 'none';
+        adminFields.style.display = 'none';
+
+        // Show fields based on the selected role
+        if (role === 'Teacher') {
+            teacherFields.style.display = 'block';
+        } else if (role === 'Student') {
+            studentFields.style.display = 'block';
+        } else if (role === 'Admin') {
+            adminFields.style.display = 'block';
+        }
+    }
+</script>
+
 
 <body>
 
@@ -169,6 +62,11 @@ if (isset($_POST['submit'])) {
     <!-- ******************************START SIGNUP PAGE ***********************************-->
     <div class="container-log">
         <h2>Sign Up</h2>
+        <!-- button to sign up as  -->
+        <input type="submit" name="role" value="Teacher" onclick="showFields('Teacher')">&nbsp;&nbsp;&nbsp;
+        <input type="submit" name="role" value="Student" onclick="showFields('Student')">&nbsp;&nbsp;&nbsp;
+        <input type="submit" name="role" value="Admin" onclick="showFields('Admin')">
+
         <form id="signup-form" action="SignUp.php" method="POST">
             <label for="user_name" class="fa fa-user me-7">&nbsp;&nbsp;&nbsp; Username:</label>
             <input type="text" id="user_name" name="user_name" required>
@@ -189,6 +87,23 @@ if (isset($_POST['submit'])) {
             }
             ?>
 
+            <br><br>
+            <div id="teacherFields" style="display: none;">
+                <!-- Teacher-specific fields -->
+                Teacher Name: <input type="text" name="teacherName">
+                Teacher Subject: <input type="text" name="teacherSubject">
+            </div>
+            <div id="studentFields" style="display: none;">
+                <!-- Student-specific fields -->
+                Student Name: <input type="text" name="studentName">
+                Student Grade: <input type="text" name="studentGrade">
+            </div>
+
+            <div id="adminFields" style="display: none;">
+                <!-- Admin-specific fields -->
+                Admin Name: <input type="text" name="adminName">
+                Admin Role: <input type="text" name="adminRole">
+            </div>
             <br><br>
             <label for="age" class="fa fa-birthday-cake me-7">&nbsp;&nbsp;&nbsp; Age:</label>
             <input type="number" id="age" name="age" required><br><br>
@@ -234,6 +149,12 @@ if (isset($_POST['submit'])) {
             <input type="submit" name="submit" class="submit-log" value="Sign Up">
         </form>
         <p id="error-message"></p>
+        <?php
+        if (isset($error_meassage)) {
+            echo $error_meassage;
+        }
+
+        ?>
         <p>Already have an account? <a href="Login.php">&nbsp;&nbsp;&nbsp; Login</a></p>
     </div>
     <!-- ***********************************************************************************-->

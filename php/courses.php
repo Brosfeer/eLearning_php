@@ -3,30 +3,30 @@ include 'dbCon.php';
 session_start();
 
 
-if (isset($_SESSION["user_id"])) {
+    if (isset($_SESSION["user_id"])) {
 
-    $user_id = $_SESSION["user_id"];
+        $user_id = $_SESSION["user_id"];
 
-    echo "the user_id =$user_id";
-    $getInfo = mysqli_prepare($con, "SELECT User_Name, E_mail, title, Description, course_id, courses_image, Duration FROM coursesProfileDetails WHERE user_id=?");
-    mysqli_stmt_bind_param($getInfo, "s", $user_id);
-    mysqli_stmt_execute($getInfo);
-    $result = mysqli_stmt_get_result($getInfo);
+        echo "the user_id =$user_id";
+        $getInfo = mysqli_prepare($con, "SELECT User_Name, E_mail, title, Description, course_id, courses_image, Duration FROM coursesProfileDetails WHERE user_id=?");
+        mysqli_stmt_bind_param($getInfo, "s", $user_id);
+        mysqli_stmt_execute($getInfo);
+        $result = mysqli_stmt_get_result($getInfo);
 
-    $data = array();
-    while ($row = mysqli_fetch_assoc($result)) {
-        $data[] = $row;
-    }
+        $data = array();
+        while ($row = mysqli_fetch_assoc($result)) {
+            $data[] = $row;
+        }
 
-    // تحويل المصفوفة إلى سلسلة JSON
-    $jsonString = json_encode($data);
+        // تحويل المصفوفة إلى سلسلة JSON
+        $jsonString = json_encode($data);
 
-    // حفظ السلسلة JSON في ملف
-    file_put_contents('data.json', $jsonString);
+        // حفظ السلسلة JSON في ملف
+        file_put_contents('data.json', $jsonString);
 
-    // عرض البيانات حسب الفهرس
+        // عرض البيانات حسب الفهرس
 
-    foreach ($data as $index => $row);
+        foreach ($data as $index => $row);
     //  {
     //     echo "<tr>";
     //     echo "<td>" . $row['User_Name'] . "</td>";
@@ -43,7 +43,7 @@ if (isset($_SESSION["user_id"])) {
     //         echo "<div>Duration: " . $row['Duration'] . "</div>";
     //     }
     // }
-    echo "</table>";
+    // echo "</table>";
     if (isset($_POST['submit'])) {
 
         echo "<br>*********************************<br>*******************<br>";
@@ -51,7 +51,7 @@ if (isset($_SESSION["user_id"])) {
         $addDesc = $_POST['desc'];
         $addDuration = $_POST['Duration'];
 
-        echo "hi :$addTitle" . "<br> desc: is " . $addDesc . "<br> duration is :" . $addDuration . "br";
+        // echo "hi :$addTitle" . "<br> desc: is " . $addDesc . "<br> duration is :" . $addDuration . "br";
 
         echo "$user_id";
         $addcate = 1;
@@ -276,7 +276,7 @@ if (isset($_SESSION["user_id"])) {
                         <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30
                             Students</small>
                     </div>
-                </div>
+                </div>  
             </div>
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
                 <div class="course-item bg-light">
@@ -1070,8 +1070,8 @@ if (isset($_SESSION["user_id"])) {
                                 <td><label for="">Enter Duration:</label></td>
                                 <td><input type="text" name="Duration"><BR></td< /tr><br>
                             <tr>
-                                <td><label for="">categories:</label></td>
-                                <td><input type="text" name="cate"><BR></td< /tr><br>
+                                <!-- <td><label for="">categories:</label></td> -->
+                                <!-- <td><input type="text" name="cate"><BR></td< /tr><br> -->
 
                             <tr>
                                 <td></td>

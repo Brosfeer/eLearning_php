@@ -1,3 +1,50 @@
+<?php  
+
+session_start();
+
+include 'dbCon.php';
+
+$user_id = $_SESSION['user_id'];
+echo $user_id;
+
+if (isset($_POST['save_changes'])) {
+  $email = $_POST['changeEmail'];
+  $name = $_POST['changeName'];
+  $password = $_POST['changePassword'];
+  $confirmPassword = $_POST['confirmPassword'];
+
+  // التحقق من تطابق كلمة المرور مع تأكيد كلمة المرور
+  
+  // قم بتنفيذ الإجراء الذي ترغب فيه عند النقر على زر "Save changes"
+  echo "تم النقر على زر Save changes!";
+  echo "<br>";
+  echo "البريد الإلكتروني: " . $email;
+  echo "<br>";
+  echo "الاسم: " . $name;
+  echo "<br>";
+  echo "كلمة المرور: " . $password;
+
+  // إضافة السكربت لإخفاء الـ "pop-up"
+
+
+  $sql = mysqli_prepare($con, "UPDATE users SET E_mail=?, User_Name=?, Password=? WHERE user_id = ?");
+  mysqli_stmt_bind_param($sql, "sssi", $email, $name, $password, $user_id);
+  mysqli_stmt_execute($sql);
+
+  if (mysqli_stmt_affected_rows($sql) > 0) {
+    if ($password !== $confirmPassword) {
+        echo "<script>alert('كلمة المرور وتأكيد كلمة المرور غير متطابقين');</script>";
+        // قم بتنفيذ الإجراءات الإضافية في حالة عدم تطابق كلمة المرور
+      } else {
+        // قم بتنفيذ الإجراءات الإضافية في حالة تطابق كلمة المرور
+        // يمكنك إضافة رمز لتحديث البيانات في قاعدة البيانات هنا
+        echo "<script>alert('تم تحديث البيانات بنجاح');</script>";
+      }
+  }  
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -31,110 +78,7 @@
 
         <!-- Template Stylesheet -->
         <link href="../css/style.css" rel="stylesheet">
-        <style>
-            .center{
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%,-50%);
-            }
-            .center button{
-                padding: 10px 20px;
-                font-size: 15px;
-                font-weight: 600;
-                color: #222;
-                background: #f5f5f5;
-                border: none;
-                outline: none;
-                cursor: pointer;
-                border-radius: 5px;
-            }
-            .popup{
-                position: absolute;
-                top: -150%;
-                left: 50%;
-                opacity:0;
-                transform: translate(-50%,-50%) scale(1.25);
-                width: 380px;
-                padding: 20px 30px;
-                background: #fff;
-                box-shadow: 2px 2px 5px 5px rgba(0,0,0,0.15);
-                border-radius: 10px;
-                transition: top 0ms ease-in-out 200ms,
-                          opacity 200ms ease-in-out 0ms,
-                          transform 20ms ease-in-out 0ms;
-                
-            }
-            .popup.active{
-                top:50%;   
-                  opacity: 1;
-                transform: translate(-50%,-50%) scale(1);
-                transition: top 0ms ease-in-out 0ms,
-                            opacity 200ms ease-in-out 0ms,
-                            transform 20ms ease-in-out 0ms;
-            }
-            .popup .close-btn{
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                width: 15px;
-                height: 15px;
-                background: #888;
-                color: #eee;
-                text-align: center;
-                line-height: 15px;
-                border-radius: 15px;
-                cursor: pointer;
-            }
-            .popup .form h2{
-                text-align: center;
-                color: #222;
-                margin: 10px 0px 20px ;
-                font-size: 25px;
-            }
-            .popup .form .form-element{
-                margin:15px 0px;
-            }
-            .popup form .form-element label{
-                font-size: 14px;
-                color: #222;
-            }
-            .popup .form-element input[type="text"],
-            .popup .form-element input[type="password"]{
-                margin-top: 5px;
-                display: block;
-                width: 100%;
-                padding: 10px;
-                outline: none;
-                border: 1px solid #aaa;
-                border-radius: 5px;
-            }
-            .popup .form-element button{
-                width: 100%;
-                height: 40px;
-                border: none;
-                outline: none;
-                font-size:15px;
-                background: #222;
-                color: #f5f5f5;
-                border-radius: 10px;
-                cursor: pointer;
-                
-            }
-
-
-
-        </style>
-        <script>
-                document.querySelector("#shwo-login").addEventListener("click",function (){
-                    document.querySelector(".popup").classList.add("active");
-                    
-                });
-                 document.querySelector(".popup .close-btn").addEventListener("click",function (){
-                    document.querySelector(".popup").classList.remove("active");
-                    
-                });
-        </script>
+       
     </head>
 
     <body>
@@ -184,8 +128,12 @@
         <div class="container-fluid bg-primary py-5 mb-5 page-header">
 
             <div class="container py-7 ">
+                <bu>
                 <div class="row justify-content-center">
                     <div class="col-lg-9 text-center ">
+                      
+                    <?php include 'popupChangePass.php'?>
+                       
                         <img class="border rounded-circle p-2 mx-auto mb-3" src="../img/testimonial-1.jpg"
                              style="width: 200px; height: 200px;">
                         <h1 class="display-2 text-black animated slideInDown" style="font-size: 30px;color: white;">
@@ -202,6 +150,9 @@
                     </div>
                 </div>
             </div>
+            
+            
+
         </div>
     </div><br><br>
     <div id="User_Name"></div>

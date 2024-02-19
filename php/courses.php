@@ -1,7 +1,10 @@
 <?php
 include 'dbCon.php';
 session_start();
-
+global $selectedRole;
+global $Specialization;
+echo "Selected Role: " . $selectedRole;
+    echo "<br>Selected Role: " . $Specialization;
 
     if (isset($_SESSION["user_id"])) {
 
@@ -18,31 +21,31 @@ session_start();
             $data[] = $row;
         }
 
-        // تحويل المصفوفة إلى سلسلة JSON
-        $jsonString = json_encode($data);
+        // // تحويل المصفوفة إلى سلسلة JSON
+        // $jsonString = json_encode($data);
 
-        // حفظ السلسلة JSON في ملف
-        file_put_contents('data.json', $jsonString);
+        // // حفظ السلسلة JSON في ملف
+        // file_put_contents('data.json', $jsonString);
 
         // عرض البيانات حسب الفهرس
 
-        foreach ($data as $index => $row);
-    //  {
-    //     echo "<tr>";
-    //     echo "<td>" . $row['User_Name'] . "</td>";
-    //     echo "<td>" . $row['E_mail'] . "</td>";
+        foreach ($data as $index => $row)
+     {
+        echo "<tr>";
+        echo "<td>" . $row['User_Name'] . "</td>";
+        echo "<td>" . $row['E_mail'] . "</td>";
 
-    //     echo "</tr>";
+        echo "</tr>";
 
-    //     // العرض في <div> حسب الفهرس المحدد
-    //     if ($index == 2) { // الفهرس المحدد
-    //         echo "<div>title: " . $row['title'] . "</div>";
-    //         echo "<div>Description: " . $row['Description'] . "</div>";
-    //         echo "<div>course_id: " . $row['course_id'] . "</div>";
-    //         echo "<div>courses_image: " . $row['courses_image'] . "</div>";
-    //         echo "<div>Duration: " . $row['Duration'] . "</div>";
-    //     }
-    // }
+        // العرض في <div> حسب الفهرس المحدد
+        if ($index == 2) { // الفهرس المحدد
+            echo "<div>title: " . $row['title'] . "</div>";
+            echo "<div>Description: " . $row['Description'] . "</div>";
+            echo "<div>course_id: " . $row['course_id'] . "</div>";
+            echo "<div>courses_image: " . $row['courses_image'] . "</div>";
+            echo "<div>Duration: " . $row['Duration'] . "</div>";
+        }
+    }
     // echo "</table>";
     if (isset($_POST['submit'])) {
 
@@ -203,7 +206,8 @@ session_start();
                             <li class="breadcrumb-item"><a class="text-white" href="#">Pages</a></li>
                             <li class="breadcrumb-item text-white active" aria-current="page">About</li>
                         </ol>
-                    </nav>
+                    </nav><a href="profile.php">
+                    <button class="btn btn-primary" onclick="profile.php">change your setting</button></a>
                 </div>
             </div>
         </div>

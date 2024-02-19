@@ -1,11 +1,29 @@
 <?php  
-
+include 'dbCon.php';
 session_start();
 
-include 'dbCon.php';
+
 
 $user_id = $_SESSION['user_id'];
 echo $user_id;
+if (isset($_SESSION["user_id"])) {
+
+    $user_id = $_SESSION["user_id"];
+
+    echo "the user_id =$user_id";
+    $getInfo = mysqli_prepare($con, "SELECT User_Name, E_mail FROM USERS WHERE user_id=?");
+    mysqli_stmt_bind_param($getInfo, "s", $user_id);
+    mysqli_stmt_execute($getInfo);
+    $result = mysqli_stmt_get_result($getInfo);
+
+    $data = array();
+    while ($row = mysqli_fetch_assoc($result)) {
+        $data[] = $row;
+    }
+    foreach ($data as $index => $row);
+
+
+}
 
 if (isset($_POST['save_changes'])) {
   $email = $_POST['changeEmail'];
@@ -137,9 +155,9 @@ if (isset($_POST['save_changes'])) {
                         <img class="border rounded-circle p-2 mx-auto mb-3" src="../img/testimonial-1.jpg"
                              style="width: 200px; height: 200px;">
                         <h1 class="display-2 text-black animated slideInDown" style="font-size: 30px;color: white;">
-                            YOUR_NAME:<h2 id="User_Name0" class="text-white large" ></h2></h1><BR>
+                            YOUR_NAME:<h2 class="text-white large" ><?php echo "  " .$row['User_Name'];?></h2></h1><BR>
                         <h1 class="display-2 text-black animated slideInDown" style="font-size: 20px;color: white;">
-                            YOUR_EMAIL:<h2 id="E_mail0" class="text-white large" ></h1>
+                            YOUR_EMAIL:<h2 id="E_mail0" class="text-white large" ><?php echo "  " .$row['E_mail'];?></h1>
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb justify-content-center">
                                 <li class="breadcrumb-item"><a class="text-white" href="index.html">Home</a></li>

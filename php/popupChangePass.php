@@ -36,11 +36,11 @@
                     <form method="post">
                         <div class="form-group">
                             <label for="email">Email:</label>
-                            <input type="email" class="form-control" name="changeEmail" id="email" placeholder="Enter your email" required>
+                            <input type="email" class="form-control" name="changeEmail" id="email" placeholder="<?php echo "  " .$row['E_mail'];?>" required>
                         </div>
                         <div class="form-group">
                             <label for="name">Name:</label>
-                            <input type="text" class="form-control" name="changeName" id="name" placeholder="Enter your name" required>
+                            <input type="text" class="form-control" name="changeName" id="name" placeholder="<?php echo "  " .$row['User_Name'];?>" required>
                         </div>
                         <div class="form-group">
                             <label for="password">Password:</label>

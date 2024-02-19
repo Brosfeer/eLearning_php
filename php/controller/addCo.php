@@ -3,14 +3,6 @@ include '../dbCon.php';
 session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-// try {
-//     // Your database operations here
-//     if($con){
-//         echo "connect ";
-//     }
-// } catch (Exception $e) {
-//     echo "Error: " . $e->getMessage();
-// }
 
 
 $user_id = $_SESSION["user_id"];
@@ -24,6 +16,9 @@ if (isset($_POST['submit'])) {
     $description = $_POST['desc'];
     $duration = $_POST['duration'];
     $image = $_FILES['image']['name']; // Assuming you'll store the image filename in the database
+    // echo $image;
+
+
 
     // Lesson details
     $le_title = $_POST['le_title'];
@@ -34,41 +29,53 @@ if (isset($_POST['submit'])) {
     // Handle file uploads
     $image_tmp = $_FILES['image']['tmp_name'];
     $ext_res_tmp = $_FILES['ext_res']['tmp_name'];
-    echo $image_tmp;
+    echo '<br>' . $image_tmp;
+    // echo "<img src='$image_tmp'/>";
 
-    // // Move uploaded files to a directory
-    // move_uploaded_file($image_tmp, 'uploads/' . $image);
-    // move_uploaded_file($ext_res_tmp, 'uploads/' . $ext_res);
-
-    // Database connection
-    // $db = new PDO('mysql:host=localhost;dbname=your_database', 'username', 'password');
+    // Move uploaded files to a directory
+    move_uploaded_file($image_tmp, 'uploads/' . $image);
+    move_uploaded_file($ext_res_tmp, 'uploads/' . $ext_res);
+    // move_uploaded_file()
+$cat=2;
 
     // Insert course details into the database
     try {
-        $stmt = $con->prepare("INSERT INTO courses (title, Description, duration, courses_image) VALUES (:co_title, :description, :duration, :image)");
-        $stmt->bind_param(':co_title', $co_title);
-        $stmt->bind_param(':description', $description);
-        $stmt->bind_param(':duration', $duration);
-        $stmt->bind_param(':image', $image);
+        // this using mysqli 
+        echo "<br>before inserting";
+        $stmt = $con->prepare("INSERT INTO courses (title, Description, duration, courses_image,category_id) VALUES (?, ?, ?, ?,?)");
+        $stmt->bind_param('ssssi', $co_title, $description, $duration, $image_tmp,$cat);
         $stmt->execute();
+
+        // Get the ID of the last inserted record
+        $course_id = $con->insert_id;
+
+        echo "<br>Inserted course ID: " . $course_id."<br>";
+
+        echo "<br>insertede<br>";
+
 
         // Insert lesson details into the database
-        $stmt = $con->prepare("INSERT INTO lessons (title, content, video_url, external_res) VALUES (:le_title, :content, :vid_url, :ext_res)");
-        $stmt->bind_param(':le_title', $le_title);
-        $stmt->bind_param(':content', $content);
-        $stmt->bind_param(':vid_url', $vid_url);
-        $stmt->bind_param(':ext_res', $ext_res);
+        // this using mysqli 
+        $stmt = $con->prepare("INSERT INTO lessons (course_id,title, content, video_url, external_res) VALUES (?,?, ?, ?, ?)");
+        $stmt->bind_param('issss',$course_id, $le_title, $content, $vid_url, $ext_res);
         $stmt->execute();
+        echo "<br>inserted to the lesson<br>";
 
         if ($stmt) {
+            echo "<br>";
             echo "Form submitted successfully.";
+            echo "<br>";
         } else {
+            echo "<br>";
             echo "Error submitting form.";
+            echo "<br>";
         }
     } catch (Error $e) {
+        echo "<br>";
         echo "Error: " . $e->getMessage();
+        echo "<br>";
     }
-}else {
+} else {
     echo "not submited";
 }
 

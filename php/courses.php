@@ -10,7 +10,12 @@ echo "Selected Role: " . $selectedRole;
 
         $user_id = $_SESSION["user_id"];
 
+
         echo "the user_id =$user_id";
+        
+echo "Selected Role: " . $selectedRole."<br>";
+echo "<br>Selected Role: " . $Specialization."<br>";
+
         $getInfo = mysqli_prepare($con, "SELECT User_Name, E_mail, title, Description, course_id, courses_image, Duration FROM coursesProfileDetails WHERE user_id=?");
         mysqli_stmt_bind_param($getInfo, "s", $user_id);
         mysqli_stmt_execute($getInfo);

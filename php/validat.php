@@ -18,16 +18,27 @@ if (isset($_POST['submit'])) {
     mysqli_stmt_bind_param($stmt, "s", $user_name);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
-    if (mysqli_num_rows($result) == 1) {
+    if (mysqli_num_rows($result) >0) {
         $row = mysqli_fetch_assoc($result);
+        
         if ($row['Password'] == $password) {
             // تخزين user_id في الـ session
              $user_id =$_SESSION['user_id'] = $row['user_id'];
-           
-
-            $nextPage = "courses.php";
+             if ($row['userType'] =='Teacher'){
+                $_SESSION['Teacher_name'] =$row['User_Name'];
+                // header('location:teacherProfile.php');
+                $nextPage = "courses.php";
+                echo "<script>window.location.href='$nextPage';</script>";
+                exit;
+              }elseif($row['userType'] =='Student'){
+                $_SESSION['user_name'] =$row['User_Name'];
+                // header('location:userProfile.php');
+                $nextPage = "userProfile.php";
             echo "<script>window.location.href='$nextPage';</script>";
             exit;
+              }
+
+            
         } else {
             echo "اسم المستخدم أو كلمة المرور غير صحيحة.";
         }

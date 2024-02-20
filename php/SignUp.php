@@ -33,28 +33,6 @@ require "controller/siUp.php";
 </head>
 <!-- *********************************End include files of SignUp page**************************************************-->
 <!-- ***************************show input field for specfied user****************************-->
-<script>
-    function showFields(role) {
-        var teacherFields = document.getElementById('teacherFields');
-        var studentFields = document.getElementById('studentFields');
-        var adminFields = document.getElementById('adminFields');
-
-        // Hide all fields by default
-        teacherFields.style.display = 'none';
-        studentFields.style.display = 'none';
-        adminFields.style.display = 'none';
-
-        // Show fields based on the selected role
-        if (role === 'Teacher') {
-            teacherFields.style.display = 'block';
-        } else if (role === 'Student') {
-            studentFields.style.display = 'block';
-        } else if (role === 'Admin') {
-            adminFields.style.display = 'block';
-        }
-    }
-</script>
-
 
 <body>
 
@@ -63,11 +41,14 @@ require "controller/siUp.php";
     <div class="container-log">
         <h2>Sign Up</h2>
         <!-- button to sign up as  -->
-        <input type="submit" name="role" value="Teacher" onclick="showFields('Teacher')">&nbsp;&nbsp;&nbsp;
-        <input type="submit" name="role" value="Student" onclick="showFields('Student')">&nbsp;&nbsp;&nbsp;
-        <input type="submit" name="role" value="Admin" onclick="showFields('Admin')">
-
+        <br>
         <form id="signup-form" action="SignUp.php" method="POST">
+            <label for="roleSelect">User Type:</label>
+            <select class="form-control text-center" name="userType" id="roleSelect" onclick="toggleAdditionalField()">
+                <option value="Tea" class=""> Selece user Type -----:</span></option>
+                <option value="Teacher">Teacher</option>
+                <option value="Student">Student</option>
+            </select><br><br>
             <label for="user_name" class="fa fa-user me-7">&nbsp;&nbsp;&nbsp; Username:</label>
             <input type="text" id="user_name" name="user_name" required>
             <?php
@@ -76,7 +57,7 @@ require "controller/siUp.php";
                 echo "Invalid name. Remove double quotes, asterisks, spaces, or digits.";
             }
             ?><br><br>
-            <label for="email" class="fa fa-envelope me-7">&nbsp;&nbsp;&nbsp; Email:</label>
+            <label for="email" class="fa fa-envelope me-7">&nbsp;&nbsp;&nbsp; Email:</label><br>
             <input type="email" id="email" name="email" required><br>
             <?php
             global $isValidEmail;
@@ -86,29 +67,16 @@ require "controller/siUp.php";
                 }
             }
             ?>
-
-            <br><br>
-            <div id="teacherFields" style="display: none;">
-                <!-- Teacher-specific fields -->
-                Teacher Name: <input type="text" name="teacherName">
-                Teacher Subject: <input type="text" name="teacherSubject">
+            
+            <div id="additionalFieldforAge">
+                <label for="age" class="fa fa-birthday-cake me-7">&nbsp;&nbsp;&nbsp; Age:</label><br>
+                <input type="number" id="age" name="age"/>
             </div>
-            <div id="studentFields" style="display: none;">
-                <!-- Student-specific fields -->
-                Student Name: <input type="text" name="studentName">
-                Student Grade: <input type="text" name="studentGrade">
+            
+            <div id="additionalFieldforAddress">
+                <label for="address" class="fa fa-map-marker-alt me-7">&nbsp;&nbsp;&nbsp; address:</label>
+                <input type="text" id="address" name="address" /><br>
             </div>
-
-            <div id="adminFields" style="display: none;">
-                <!-- Admin-specific fields -->
-                Admin Name: <input type="text" name="adminName">
-                Admin Role: <input type="text" name="adminRole">
-            </div>
-            <br><br>
-            <label for="age" class="fa fa-birthday-cake me-7">&nbsp;&nbsp;&nbsp; Age:</label>
-            <input type="number" id="age" name="age" required><br><br>
-            <label for="address" class="fa fa-map-marker-alt me-7">&nbsp;&nbsp;&nbsp; address:</label>
-            <input type="text" id="address" name="address" required /><br>
             <?php
             global $containsRestrictedCharsAddress;
             if (isset($containsRestrictedCharsAddress)) {
@@ -116,17 +84,20 @@ require "controller/siUp.php";
                     echo "Invalid address. It should not contain double quotes, asterisks, spaces, or digits.";
                 }
             }
-            ?><br><br>
-            <label for="NumberPhone" class="fa fa-phone-alt me-4">&nbsp;&nbsp;&nbsp; Phone:</label>
-            <input type="text" id="phone_no" name="phone_no" required>
-            <?php
-            global $isValidPhoneNumber;
-            if (isset($isValidPhoneNumber)) {
-                if (!$isValidPhoneNumber) {
-                    echo "Invalid phone number. It should contain exactly 10 digits.";
-                }
-            }
-            ?><br><br>
+            ?>
+            <div id="additionalFieldforSpecialization">
+                <label for="admin-specialization" class="fa fa-chalkboard-teacher  me-7">&nbsp;&nbsp;&nbsp; Teacher Specialization:</label>
+                <input type="text" id="admin-specialization" name="spec" ><br>
+            </div>
+            <div id="additionalFieldforDescription">
+                <label for="admin-specialization" class="fa fa-chalkboard-teacher  me-7">&nbsp;&nbsp;&nbsp; Teacher Description:</label>
+              <br>  <textarea id="admin-Description" name="desc"></textarea>
+            </div>
+            <div id="additionalFieldforPhone">
+                <label for="NumberPhone" class="fa fa-phone-alt me-4">&nbsp;&nbsp;&nbsp; Phone:</label>
+                <input type="text" id="phone_no" name="phone_no" >
+            </div>
+           
             <label for="password" class="fa fa-lock me-7">&nbsp;&nbsp;&nbsp; Password:</label>
             <input type="password" id="password" name="password" required>
             <?php
@@ -135,7 +106,7 @@ require "controller/siUp.php";
                 if (!$isValidPassword) {
                     echo "Invalid password. It should contain at least one uppercase letter, one lowercase letter, one digit, one special character, and no spaces.";
                 }
-            }    ?><br><br>
+            }    ?><br>
             <label for="confirm-password" class="fa fa-lock me-7">&nbsp;&nbsp;&nbsp; Confirm Password:</label>
             <input type="password" id="confirm_password" name="confirm_password" required><br>
             <?php
@@ -161,6 +132,32 @@ require "controller/siUp.php";
     <!-- ******************************* END SIGNUP PAGE  **********************************-->
 
     <!-- Carousel End -->
+    <script>
+        function toggleAdditionalField() {
+            var roleSelect = document.getElementById("roleSelect");
+            var additionalFieldforSpecialization = document.getElementById("additionalFieldforSpecialization");
+            var additionalFieldforDescription = document.getElementById("additionalFieldforDescription");
+            var additionalFieldforPhone = document.getElementById("additionalFieldforPhone");
+            var additionalFieldforAddress = document.getElementById("additionalFieldforAddress");
+            var additionalFieldforAge = document.getElementById("additionalFieldforAge");
+            if (roleSelect.value === "Teacher") {
+                additionalFieldforSpecialization.style.display = "block";
+                additionalFieldforDescription.style.display = "block";
+            } else {
+                additionalFieldforSpecialization.style.display = "none";
+                additionalFieldforDescription.style.display = "none";
+            }
+            if (roleSelect.value === "Student") {
+                additionalFieldforPhone.style.display = "block";
+                additionalFieldforAddress.style.display = "block";
+                additionalFieldforAge.style.display = "block";
+            } else {
+                additionalFieldforPhone.style.display = "none";
+                additionalFieldforAddress.style.display = "none";
+                additionalFieldforAge.style.display = "none";
+            }
+        }
+    </script>
 
 </body>
 

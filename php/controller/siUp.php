@@ -28,8 +28,15 @@ if (isset($_POST['submit'])) {
     $phone_no = $_POST['phone_no'];
     $password = $_POST['password'];
     $confirm_password    = $_POST['confirm_password'];
+    $userType = $_POST['userType'];
+    $spec = $_POST['spec'];
+    $desc = $_POST['desc'];
+    echo "Selected Role: " . $userType;
+    echo "<br>Selected Role: " . $spec;
+
     // echo $user_name . "<br>" . $email . " <br>" . $phone_no . " <br>" . $address . " <br>" . $password . " <br>" . $confirm_password;
     //***********************************************************************************
+
     //***********************************************************************************
 
     //***********************************************************************************
@@ -65,74 +72,141 @@ if (isset($_POST['submit'])) {
     // $containsPhoneNumberRegex = !preg_match($phoneNumberRegex, $phone_no);
     //***********************************************************************************
     //***************************END validation of the input*****************************
+
     $stmt = mysqli_prepare($con, "SELECT E_mail FROM users WHERE E_mail = ?");
     mysqli_stmt_bind_param($stmt, "s", $email);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
 
+
     if (mysqli_num_rows($result)) {
-        $error_meassage = "User Exist";
+        $error_meassage = "User Alredy Exist";
     } else {
+        if ($userType == 'Student') {
+            echo "hi ";
+            //***********************************************************************************
+            //****************************insert data into table users **************************
+            $sql_users = "INSERT INTO users(User_Name, Password, E_mail,userType) VALUES (?, ?, ?,?)";
+            $userStatement = $con->prepare($sql_users);
+            $userStatement->bind_param("ssss", $user_name, $password, $email,$userType);
+            $userStatement->execute();
+            //***********************************************************************************
+            //**************************END insert data into table users ************************
+            //***********************************************************************************
+            //****************************Generate user_id session ******* **********************
+            global $user_id;
+            $user_id = 12;
+            try {
+                // Get the generated user_id
+                $generatedKeys = $userStatement->insert_id;
+                if ($generatedKeys > 0) {
+                    $user_id = $generatedKeys;
+                    // echo "The User Id From the GetCon Servlet: " . $user_id;
 
-        //***********************************************************************************
-        //****************************insert data into table users **************************
-        $sql_users = "INSERT INTO users(User_Name, Password, E_mail) VALUES (?, ?, ?)";
-        $userStatement = $con->prepare($sql_users);
-        $userStatement->bind_param("sss", $user_name, $password, $email);
-        $userStatement->execute();
-        //***********************************************************************************
-        //**************************END insert data into table users ************************
+                    // Create a session
+
+                    $_SESSION["user_id"] = $user_id;
+                    // echo $user_id;
+                    // buildSession(request, email);
+                } else {
+                    throw new mysqli_sql_exception("Failed to retrieve the generated user_id.");
+                }
+            } catch (mysqli_sql_exception $e) {
+                // Rollback the transaction in case of any error
+                if ($con != null) {
+                    $con->Rollback();
+                }
+                throw $e;
+            }
+            //***********************************************************************************
+            //****************************END Generate user_id session **************************
+            //***********************************************************************************
+            //****************************Insert data into 'students' table *********************
+            $sql_students = "INSERT INTO students(user_id,age, address, phone_no) VALUES (?, ?, ?, ?)";
+            $studentStatement = $con->prepare($sql_students);
+            $studentStatement->bind_param("isss", $user_id, $age, $address, $phone_no);
+            $studentStatement->execute();
 
 
-        //***********************************************************************************
-        //****************************Generate user_id session ******* **********************
-        global $user_id;
-        $user_id = 12;
-        try {
-            // Get the generated user_id
-            $generatedKeys = $userStatement->insert_id;
-            if ($generatedKeys > 0) {
-                $user_id = $generatedKeys;
-                // echo "The User Id From the GetCon Servlet: " . $user_id;
+            if ($studentStatement->affected_rows > 0) {
 
-                // Create a session
-
-                $_SESSION["user_id"] = $user_id;
-                // echo $user_id;
-                // buildSession(request, email);
+                echo "تم إدخال البيانات بنجاح.";
+                // header('location:../userProfile.php');
+                $nextPage = "Login.php";
+                echo "<script>window.location.href='$nextPage';</script>";
+                exit;
             } else {
-                throw new mysqli_sql_exception("Failed to retrieve the generated user_id.");
+                echo "حدث خطأ أثناء إدخال البيانات.";
             }
-        } catch (mysqli_sql_exception $e) {
-            // Rollback the transaction in case of any error
-            if ($con != null) {
-                $con->Rollback();
+            // Commit the transaction
+            $con->commit();
+        } elseif ($userType == 'Teacher') {
+            echo "you are teature";
+            echo "admin";
+            $teacher ="teacher";
+    
+            //***********************************************************************************
+            //****************************insert data into table users **************************
+            $sql_users = "INSERT INTO users(User_Name, Password, E_mail, userType) VALUES (?, ?, ?, ?)";
+            $userStatement = $con->prepare($sql_users);
+            $userStatement->bind_param("ssss", $user_name, $password, $email,$userType);
+            $userStatement->execute();
+            //***********************************************************************************
+            //**************************END insert data into table users ************************
+            //***********************************************************************************
+            //****************************Generate user_id session ******* **********************
+            global $user_id;
+            $user_id = 12;
+            try {
+                // Get the generated user_id
+                $generatedKeys = $userStatement->insert_id;
+                if ($generatedKeys > 0) {
+                    $user_id = $generatedKeys;
+                    // echo "The User Id From the GetCon Servlet: " . $user_id;
+
+                    // Create a session
+
+                    $_SESSION["user_id"] = $user_id;
+                    // echo $user_id;
+                    // buildSession(request, email);
+                } else {
+                    throw new mysqli_sql_exception("Failed to retrieve the generated user_id.");
+                }
+            } catch (mysqli_sql_exception $e) {
+                // Rollback the transaction in case of any error
+                if ($con != null) {
+                    $con->Rollback();
+                }
+                throw $e;
             }
-            throw $e;
+            //***********************************************************************************
+            //****************************END Generate user_id session **************************
+            //***********************************************************************************
+            //*****************start  insert data into table instraction ************************
+            $sql_instructors = "INSERT INTO instructors(user_id,teacher_name,specialization, Description) VALUES (?, ?, ?, ?)";
+            $teacherStatement = $con->prepare($sql_instructors);
+            $teacherStatement->bind_param("isss", $user_id, $user_name, $spec, $desc);
+            $teacherStatement->execute();
+
+
+            if ($teacherStatement->affected_rows > 0) {
+
+                echo "تم إدخال البيانات بنجاح.";
+                // header('location:teacherProfile.php');
+                $nextPage = "Login.php";
+                echo "<script>window.location.href='$nextPage';</script>";
+                exit;
+            } else {
+                echo "حدث خطأ أثناء إدخال البيانات.";
+            }
+            // Commit the transaction
+            $con->commit();
         }
-        //***********************************************************************************
-        //****************************END Generate user_id session **************************
+
+
 
 
         //***********************************************************************************
-        //****************************Insert data into 'students' table *********************
-        $sql_students = "INSERT INTO students(user_id,age, address, phone_no) VALUES (?, ?, ?, ?)";
-        $studentStatement = $con->prepare($sql_students);
-        $studentStatement->bind_param("isss", $user_id, $age, $address, $phone_no);
-        $studentStatement->execute();
-
-        if ($studentStatement->affected_rows > 0) {
-
-            echo "تم إدخال البيانات بنجاح.";
-            $nextPage = "courses.php";
-            echo "<script>window.location.href='$nextPage';</script>";
-            exit;
-        } else {
-            echo "حدث خطأ أثناء إدخال البيانات.";
-        }
-        // Commit the transaction
-        $con->commit();
+        //****************************END Insert data into 'students' table *****************
     }
-    //***********************************************************************************
-    //****************************END Insert data into 'students' table *****************
 }

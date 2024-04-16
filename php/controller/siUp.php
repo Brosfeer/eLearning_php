@@ -29,10 +29,12 @@ if (isset($_POST['submit'])) {
     $password = $_POST['password'];
     $confirm_password    = $_POST['confirm_password'];
     $userType = $_POST['userType'];
+
     $spec = $_POST['spec'];
     $desc = $_POST['desc'];
     echo "Selected Role: " . $userType;
     echo "<br>Selected Role: " . $spec;
+    $_SESSION[$userType];
 
     // echo $user_name . "<br>" . $email . " <br>" . $phone_no . " <br>" . $address . " <br>" . $password . " <br>" . $confirm_password;
     //***********************************************************************************
@@ -84,12 +86,14 @@ if (isset($_POST['submit'])) {
     } else {
         if ($userType == 'Student') {
             echo "hi ";
+            $result->close();
             //***********************************************************************************
             //****************************insert data into table users **************************
             $sql_users = "INSERT INTO users(User_Name, Password, E_mail,userType) VALUES (?, ?, ?,?)";
             $userStatement = $con->prepare($sql_users);
             $userStatement->bind_param("ssss", $user_name, $password, $email,$userType);
             $userStatement->execute();
+            
             //***********************************************************************************
             //**************************END insert data into table users ************************
             //***********************************************************************************

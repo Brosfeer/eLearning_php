@@ -1,41 +1,34 @@
 <?php
 include 'dbCon.php';
 session_start();
-global $selectedRole;
-global $Specialization;
-echo "Selected Role: " . $selectedRole;
-    echo "<br>Selected Role: " . $Specialization;
-
-    if (isset($_SESSION["user_id"])) {
-
-        $user_id = $_SESSION["user_id"];
 
 
-        echo "the user_id =$user_id";
-        
-echo "Selected Role: " . $selectedRole."<br>";
-echo "<br>Selected Role: " . $Specialization."<br>";
+if (isset($_SESSION["user_id"])) {
 
-        $getInfo = mysqli_prepare($con, "SELECT User_Name, E_mail, title, Description, course_id, courses_image, Duration FROM coursesProfileDetails WHERE user_id=?");
-        mysqli_stmt_bind_param($getInfo, "s", $user_id);
-        mysqli_stmt_execute($getInfo);
-        $result = mysqli_stmt_get_result($getInfo);
+    $user_id = $_SESSION["user_id"];
+    $userType = $_SESSION['userType'];
 
-        $data = array();
-        while ($row = mysqli_fetch_assoc($result)) {
-            $data[] = $row;
-        }
+    echo "the user_id =$user_id";
 
-        // // تحويل المصفوفة إلى سلسلة JSON
-        // $jsonString = json_encode($data);
+    $getInfo = mysqli_prepare($con, "SELECT User_Name, E_mail, title, Description, course_id, courses_image, Duration FROM coursesProfileDetails WHERE user_id=?");
+    mysqli_stmt_bind_param($getInfo, "s", $user_id);
+    mysqli_stmt_execute($getInfo);
+    $result = mysqli_stmt_get_result($getInfo);
 
-        // // حفظ السلسلة JSON في ملف
-        // file_put_contents('data.json', $jsonString);
+    $data = array();
+    while ($row = mysqli_fetch_assoc($result)) {
+        $data[] = $row;
+    }
 
-        // عرض البيانات حسب الفهرس
+    // // تحويل المصفوفة إلى سلسلة JSON
+    // $jsonString = json_encode($data);
 
-        foreach ($data as $index => $row)
-     {
+    // // حفظ السلسلة JSON في ملف
+    // file_put_contents('data.json', $jsonString);
+
+    // عرض البيانات حسب الفهرس
+
+    foreach ($data as $index => $row) {
         echo "<tr>";
         echo "<td>" . $row['User_Name'] . "</td>";
         echo "<td>" . $row['E_mail'] . "</td>";
@@ -52,28 +45,62 @@ echo "<br>Selected Role: " . $Specialization."<br>";
         }
     }
     // echo "</table>";
-    if (isset($_POST['submit'])) {
-
-        echo "<br>*********************************<br>*******************<br>";
-        $addTitle = $_POST['title'];
-        $addDesc = $_POST['desc'];
-        $addDuration = $_POST['Duration'];
-
-        // echo "hi :$addTitle" . "<br> desc: is " . $addDesc . "<br> duration is :" . $addDuration . "br";
-
-        echo "$user_id";
-        $addcate = 1;
-        $addinst = 1;
-        $addNewCourse = mysqli_prepare($con, "INSERT INTO courses (title, Description, Duration, category_id, instructor_id) VALUES (?, ?, ?, ?, ?)");
-        $addNewCourse->bind_param("ssssi", $addTitle, $addDesc, $addDuration, $addcate, $addinst);
-        $addNewCourse->execute();
-        //          INSERT INTO courses (title, Description, Duration, category_id, instructor_id)
-        // VALUES ('عنوان الدورة', 'وصف الدورة', 'مدة الدورة', 1, 1);
-    }
 } else {
     $loginPage = "Login.php";
     echo "<script>window.location.href='$loginPage';</script>";
 }
+if (isset($_POST['co_title'])) {
+    echo "<br><br>********************************After clike*************************<br>";
+    echo $user_id;
+    $co_title = $_POST['co_title'];
+    $co_desc = $_POST['co_desc'];
+    $co_dur = $_POST['co_dur'];
+    if (isset($con)) {
+        $selctCourseId = mysqli_prepare($con, "SELECT course_id FROM courses WHERE title=?");
+        mysqli_stmt_bind_param($selctCourseId, "s", $co_title);
+        mysqli_stmt_execute($selctCourseId);
+        mysqli_stmt_bind_result($selctCourseId, $course_id);
+
+
+
+        if (mysqli_stmt_fetch($selctCourseId)) {
+            echo "<br>COURES_ID: " . $course_id;
+            $selctCourseId->close();
+
+            if (isset($con)) {
+                // التحقق من وجود الـ "course_id" بواسطة استعلام SELECT
+                $checkSql = "SELECT course_id FROM course_progress WHERE course_id = ? AND User_id = ?";
+                $checkStmt = $con->prepare($checkSql);
+                $checkStmt->bind_param("ss", $course_id, $user_id);
+                $checkStmt->execute();
+                $checkStmt->store_result();
+
+                if ($checkStmt->num_rows > 0) {
+                    // إذا تم العثور على الـ "course_id" بالفعل للمستخدم المحدد
+                    $error_meassage = "هذا الكورس موجود بالفعل لهذا المستخدم";
+                    echo $error_meassage;
+                } else {
+                    // إذا لم يتم العثور على الـ "course_id" للمستخدم المحدد
+                    $sql = "INSERT INTO course_progress (User_id, course_id) VALUES (?,?)";
+                    $subscribCourse = $con->prepare($sql);
+                    $subscribCourse->bind_param("ss", $user_id, $course_id);
+                    $subscribCourse->execute();
+                    $subscribCourse->close();  $nextPage = "myCourses.php";
+                    echo "<script>window.location.href='$nextPage';</script>";
+                    
+                }
+
+                $checkStmt->close();
+                $con->close();
+            } else {
+                echo "لا يوجد اتصال";
+            }
+        } else {
+            echo "لم يتم العثور على الكورس";
+        }
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -92,7 +119,7 @@ echo "<br>Selected Role: " . $Specialization."<br>";
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Icon Font Stylesheet -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
@@ -139,11 +166,16 @@ echo "<br>Selected Role: " . $Specialization."<br>";
             transition: width 0.5s, height 0.5s, opacity 0.5s;
         }
     </style>
+
 </head>
 
 <body>
 
-
+    <form action="courses.php" method="post">
+        <div id="image0">my image</div>
+        <div id="title0">web advance</div>
+        <button id="submitContent" type="submit">save</button>
+    </form>
 
     <!-- Navbar Start -->
     <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
@@ -194,17 +226,16 @@ echo "<br>Selected Role: " . $Specialization."<br>";
         <h1 class="mb-5">Welcome to Your Profile</h1>
     </div>
     <div class="container-fluid bg-primary py-5 mb-5 page-header">
-
         <div class="container py-7 ">
             <div class="row justify-content-center">
                 <div class="col-lg-9 text-center ">
                     <img class="border rounded-circle p-2 mx-auto mb-3" src="img/testimonial-1.jpg" style="width: 200px; height: 200px;">
                     <h1 class="display-2 text-black animated slideInDown" style="font-size: 30px;color: white;">
-                        YOUR_NAME:<?php echo "  " . $row['User_Name']; ?>
+                        <?php echo $userType ?>_NAME:<?php echo "  " . $row['User_Name']; ?>
                         </h2>
                     </h1><BR>
                     <h1 class="display-2 text-black animated slideInDown" style="font-size: 20px;color: white;">
-                        YOUR_EMAIL: <?php echo "  " . $row['E_mail']; ?></h1>
+                        <?php echo $userType ?>_EMAIL: <?php echo "  " . $row['E_mail']; ?></h1>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb justify-content-center">
                             <li class="breadcrumb-item"><a class="text-white" href="index.html">Home</a></li>
@@ -212,7 +243,7 @@ echo "<br>Selected Role: " . $Specialization."<br>";
                             <li class="breadcrumb-item text-white active" aria-current="page">About</li>
                         </ol>
                     </nav><a href="profile.php">
-                    <button class="btn btn-primary" onclick="profile.php">change your setting</button></a>
+                        <button class="btn btn-primary" onclick="profile.php">change your setting</button></a>
                 </div>
             </div>
         </div>
@@ -224,14 +255,16 @@ echo "<br>Selected Role: " . $Specialization."<br>";
     <div class="container">
         <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
             <h6 class="section-title bg-white text-center text-primary px-3">Courese</h6>
-            <h1 class="mb-5">Your Courese</h1>
-            </div<br>
-        </div>
+            <h1 class="mb-5">Our Courese</h1>
+        </div><br>
+    </div>
     <!--
     divs of your courses
     -->
-        <div class="row g-4 justify-content-center">
-            <div class="col-lg-4 col-md-6 wow fadeInUp hoverable" data-wow-delay="0.1s">
+    <div class="row g-4 justify-content-center">
+        <!-- //////////////////////////////////////////////////////////////////////// -->
+        <div class="na col-lg-4 col-md-6 wow fadeInUp hoverable" data-wow-delay="0.1s">
+            <form id="contentForm1" method="POST" action="courses.php">
                 <div class="course-item bg-light">
                     <div class="position-relative overflow-hidden">
                         <a href="#">
@@ -254,7 +287,7 @@ echo "<br>Selected Role: " . $Specialization."<br>";
                             <small class="fa fa-star text-primary"></small>
                             <small>(123)</small>
                         </div>
-                        <h2 class="mb-4">
+                        <div class="titel">
                             <?php
                             foreach ($data as $index => $row) {
                                 if ($index == 0) {
@@ -262,32 +295,46 @@ echo "<br>Selected Role: " . $Specialization."<br>";
                                 }
                             }
                             ?>
-                        </h2><br>
-                        <h3 class="small" id="coursseDiscription0"> <?php
-                                                                    foreach ($data as $index => $row) {
-                                                                        if ($index == 0) {
-                                                                            echo $row['Description'];
-                                                                        }
-                                                                    }
-                                                                    ?></h3>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" name="submit" onclick="submitForm('contentForm1')">Subscription</button><br><br>
+                        <div class="description"> <?php
+                                                    foreach ($data as $index => $row) {
+                                                        if ($index == 0) {
+                                                            echo $row['Description'];
+                                                        }
+                                                    }
+                                                    ?>
+                        </div>
                     </div>
                     <div class="d-flex border-top">
                         <small class="flex-fill text-center border-end py-2">
                             <i id="teacher_name0" class="fa fa-user-tie text-primary me-2"></i></small>
                         <small class="flex-fill text-center border-end py-2">
-                            <i id="coursseDuration0" class="fa fa-clock text-primary me-2"> <?php
-                                                                                            foreach ($data as $index => $row) {
-                                                                                                if ($index == 0) {
-                                                                                                    echo $row['Duration'];
-                                                                                                }
-                                                                                            }
-                                                                                            ?></i></small>
+                            <div class="duration"> <?php
+                                                    foreach ($data as $index => $row) {
+                                                        if ($index == 0) {
+                                                            echo $row['Duration'];
+                                                        }
+                                                    }
+                                                    ?>
+                            </div>
+                        </small>
                         <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30
                             Students</small>
                     </div>
-                </div>  
-            </div>
-            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+                </div>
+                <input type="hidden" id="contentInput1_contentForm1" name="co_title">
+                <input type="hidden" id="contentInput2_contentForm1" name="co_desc">
+                <input type="hidden" id="contentInput3_contentForm1" name="co_dur">
+
+
+            </form>
+        </div>
+        <!-- //////////////////////////////////////////////////////////////////////// -->
+        <!-- //////////////////////////////////////////////////////////////////////// -->
+        <div class="na col-lg-4 col-md-6 wow fadeInUp hoverable" data-wow-delay="0.1s">
+            <form id="contentForm2" method="POST" action="courses.php">
                 <div class="course-item bg-light">
                     <div class="position-relative overflow-hidden">
                         <a href="#">
@@ -310,7 +357,7 @@ echo "<br>Selected Role: " . $Specialization."<br>";
                             <small class="fa fa-star text-primary"></small>
                             <small>(123)</small>
                         </div>
-                        <h2 class="mb-4">
+                        <div class="titel">
                             <?php
                             foreach ($data as $index => $row) {
                                 if ($index == 1) {
@@ -318,32 +365,46 @@ echo "<br>Selected Role: " . $Specialization."<br>";
                                 }
                             }
                             ?>
-                        </h2><br>
-                        <h3 class="small" id="coursseDiscription0"> <?php
-                                                                    foreach ($data as $index => $row) {
-                                                                        if ($index == 1) {
-                                                                            echo $row['Description'];
-                                                                        }
-                                                                    }
-                                                                    ?></h3>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" name="submit" onclick="submitForm('contentForm2')">Subscription</button><br><br>
+                        <div class="description"> <?php
+                                                    foreach ($data as $index => $row) {
+                                                        if ($index == 1) {
+                                                            echo $row['Description'];
+                                                        }
+                                                    }
+                                                    ?>
+                        </div>
                     </div>
                     <div class="d-flex border-top">
                         <small class="flex-fill text-center border-end py-2">
                             <i id="teacher_name0" class="fa fa-user-tie text-primary me-2"></i></small>
                         <small class="flex-fill text-center border-end py-2">
-                            <i id="coursseDuration0" class="fa fa-clock text-primary me-2"> <?php
-                                                                                            foreach ($data as $index => $row) {
-                                                                                                if ($index == 1) {
-                                                                                                    echo $row['Duration'];
-                                                                                                }
-                                                                                            }
-                                                                                            ?></i></small>
+                            <div class="duration"> <?php
+                                                    foreach ($data as $index => $row) {
+                                                        if ($index == 1) {
+                                                            echo $row['Duration'];
+                                                        }
+                                                    }
+                                                    ?>
+                            </div>
+                        </small>
                         <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30
                             Students</small>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-4 col-md-6 wow fadeInUp hoverable" data-wow-delay="0.5s">
+                <input type="hidden" id="contentInput1_contentForm2" name="co_title">
+                <input type="hidden" id="contentInput2_contentForm2" name="co_desc">
+                <input type="hidden" id="contentInput3_contentForm2" name="co_dur">
+
+
+            </form>
+        </div>
+        <!-- //////////////////////////////////////////////////////////////////////// -->
+        <!-- //////////////////////////////////////////////////////////////////////// -->
+        <div class="na col-lg-4 col-md-6 wow fadeInUp hoverable" data-wow-delay="0.1s">
+            <form id="contentForm3" method="POST" action="courses.php">
                 <div class="course-item bg-light">
                     <div class="position-relative overflow-hidden">
                         <a href="#">
@@ -366,7 +427,7 @@ echo "<br>Selected Role: " . $Specialization."<br>";
                             <small class="fa fa-star text-primary"></small>
                             <small>(123)</small>
                         </div>
-                        <h2 class="mb-4">
+                        <div class="titel">
                             <?php
                             foreach ($data as $index => $row) {
                                 if ($index == 2) {
@@ -374,35 +435,50 @@ echo "<br>Selected Role: " . $Specialization."<br>";
                                 }
                             }
                             ?>
-                        </h2><br>
-                        <h3 class="small" id="coursseDiscription0"> <?php
-                                                                    foreach ($data as $index => $row) {
-                                                                        if ($index == 2) {
-                                                                            echo $row['Description'];
-                                                                        }
-                                                                    }
-                                                                    ?></h3>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" name="submit" onclick="submitForm('contentForm3')">Subscription</button><br><br>
+                        <div class="description"> <?php
+                                                    foreach ($data as $index => $row) {
+                                                        if ($index == 2) {
+                                                            echo $row['Description'];
+                                                        }
+                                                    }
+                                                    ?>
+                        </div>
                     </div>
                     <div class="d-flex border-top">
                         <small class="flex-fill text-center border-end py-2">
                             <i id="teacher_name0" class="fa fa-user-tie text-primary me-2"></i></small>
                         <small class="flex-fill text-center border-end py-2">
-                            <i id="coursseDuration0" class="fa fa-clock text-primary me-2"> <?php
-                                                                                            foreach ($data as $index => $row) {
-                                                                                                if ($index == 2) {
-                                                                                                    echo $row['Duration'];
-                                                                                                }
-                                                                                            }
-                                                                                            ?></i></small>
+                            <div class="duration"> <?php
+                                                    foreach ($data as $index => $row) {
+                                                        if ($index == 2) {
+                                                            echo $row['Duration'];
+                                                        }
+                                                    }
+                                                    ?>
+                            </div>
+                        </small>
                         <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30
                             Students</small>
                     </div>
                 </div>
-            </div>
-            <br><br><br>
+                <input type="hidden" id="contentInput1_contentForm3" name="co_title">
+                <input type="hidden" id="contentInput2_contentForm3" name="co_desc">
+                <input type="hidden" id="contentInput3_contentForm4" name="co_dur">
+
+
+            </form>
         </div>
-        <div class="row g-5 justify-content-center">
-            <div class="col-lg-4 col-md-6 wow fadeInUp br" data-wow-delay="0.1s">
+        <!-- //////////////////////////////////////////////////////////////////////// -->
+    </div>
+    <!-- **************************************end of section one *********************************** -->
+    <!-- **************************************start of section two *********************************** -->
+    <div class="row g-4 justify-content-center">
+        <!-- //////////////////////////////////////////////////////////////////////// -->
+        <div class="na col-lg-4 col-md-6 wow fadeInUp hoverable" data-wow-delay="0.1s">
+            <form id="contentForm4" method="POST" action="courses.php">
                 <div class="course-item bg-light">
                     <div class="position-relative overflow-hidden">
                         <a href="#">
@@ -425,7 +501,7 @@ echo "<br>Selected Role: " . $Specialization."<br>";
                             <small class="fa fa-star text-primary"></small>
                             <small>(123)</small>
                         </div>
-                        <h2 class="mb-4">
+                        <div class="titel">
                             <?php
                             foreach ($data as $index => $row) {
                                 if ($index == 3) {
@@ -433,32 +509,46 @@ echo "<br>Selected Role: " . $Specialization."<br>";
                                 }
                             }
                             ?>
-                        </h2><br>
-                        <h3 class="small" id="coursseDiscription0"> <?php
-                                                                    foreach ($data as $index => $row) {
-                                                                        if ($index == 3) {
-                                                                            echo $row['Description'];
-                                                                        }
-                                                                    }
-                                                                    ?></h3>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" name="submit" onclick="submitForm('contentForm4')">Subscription</button><br><br>
+                        <div class="description"> <?php
+                                                    foreach ($data as $index => $row) {
+                                                        if ($index == 3) {
+                                                            echo $row['Description'];
+                                                        }
+                                                    }
+                                                    ?>
+                        </div>
                     </div>
                     <div class="d-flex border-top">
                         <small class="flex-fill text-center border-end py-2">
                             <i id="teacher_name0" class="fa fa-user-tie text-primary me-2"></i></small>
                         <small class="flex-fill text-center border-end py-2">
-                            <i id="coursseDuration0" class="fa fa-clock text-primary me-2"> <?php
-                                                                                            foreach ($data as $index => $row) {
-                                                                                                if ($index == 3) {
-                                                                                                    echo $row['Duration'];
-                                                                                                }
-                                                                                            }
-                                                                                            ?></i></small>
+                            <div class="duration"> <?php
+                                                    foreach ($data as $index => $row) {
+                                                        if ($index == 3) {
+                                                            echo $row['Duration'];
+                                                        }
+                                                    }
+                                                    ?>
+                            </div>
+                        </small>
                         <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30
                             Students</small>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+                <input type="hidden" id="contentInput1_contentForm4" name="co_title">
+                <input type="hidden" id="contentInput2_contentForm4" name="co_desc">
+                <input type="hidden" id="contentInput3_contentForm4" name="co_dur">
+
+
+            </form>
+        </div>
+        <!-- //////////////////////////////////////////////////////////////////////// -->
+        <!-- //////////////////////////////////////////////////////////////////////// -->
+        <div class="na col-lg-4 col-md-6 wow fadeInUp hoverable" data-wow-delay="0.1s">
+            <form id="contentForm5" method="POST" action="courses.php">
                 <div class="course-item bg-light">
                     <div class="position-relative overflow-hidden">
                         <a href="#">
@@ -481,7 +571,7 @@ echo "<br>Selected Role: " . $Specialization."<br>";
                             <small class="fa fa-star text-primary"></small>
                             <small>(123)</small>
                         </div>
-                        <h2 class="mb-4">
+                        <div class="titel">
                             <?php
                             foreach ($data as $index => $row) {
                                 if ($index == 4) {
@@ -489,32 +579,46 @@ echo "<br>Selected Role: " . $Specialization."<br>";
                                 }
                             }
                             ?>
-                        </h2><br>
-                        <h3 class="small" id="coursseDiscription0"> <?php
-                                                                    foreach ($data as $index => $row) {
-                                                                        if ($index == 4) {
-                                                                            echo $row['Description'];
-                                                                        }
-                                                                    }
-                                                                    ?></h3>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" name="submit" onclick="submitForm('contentForm5')">Subscription</button><br><br>
+                        <div class="description"> <?php
+                                                    foreach ($data as $index => $row) {
+                                                        if ($index == 4) {
+                                                            echo $row['Description'];
+                                                        }
+                                                    }
+                                                    ?>
+                        </div>
                     </div>
                     <div class="d-flex border-top">
                         <small class="flex-fill text-center border-end py-2">
                             <i id="teacher_name0" class="fa fa-user-tie text-primary me-2"></i></small>
                         <small class="flex-fill text-center border-end py-2">
-                            <i id="coursseDuration0" class="fa fa-clock text-primary me-2"> <?php
-                                                                                            foreach ($data as $index => $row) {
-                                                                                                if ($index == 4) {
-                                                                                                    echo $row['Duration'];
-                                                                                                }
-                                                                                            }
-                                                                                            ?></i></small>
+                            <div class="duration"> <?php
+                                                    foreach ($data as $index => $row) {
+                                                        if ($index == 4) {
+                                                            echo $row['Duration'];
+                                                        }
+                                                    }
+                                                    ?>
+                            </div>
+                        </small>
                         <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30
                             Students</small>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
+                <input type="hidden" id="contentInput1_contentForm5" name="co_title">
+                <input type="hidden" id="contentInput2_contentForm5" name="co_desc">
+                <input type="hidden" id="contentInput3_contentForm5" name="co_dur">
+
+
+            </form>
+        </div>
+        <!-- //////////////////////////////////////////////////////////////////////// -->
+        <!-- //////////////////////////////////////////////////////////////////////// -->
+        <div class="na col-lg-4 col-md-6 wow fadeInUp hoverable" data-wow-delay="0.1s">
+            <form id="contentForm6" method="POST" action="courses.php">
                 <div class="course-item bg-light">
                     <div class="position-relative overflow-hidden">
                         <a href="#">
@@ -537,7 +641,7 @@ echo "<br>Selected Role: " . $Specialization."<br>";
                             <small class="fa fa-star text-primary"></small>
                             <small>(123)</small>
                         </div>
-                        <h2 class="mb-4">
+                        <div class="titel">
                             <?php
                             foreach ($data as $index => $row) {
                                 if ($index == 5) {
@@ -545,559 +649,115 @@ echo "<br>Selected Role: " . $Specialization."<br>";
                                 }
                             }
                             ?>
-                        </h2><br>
-                        <h3 class="small" id="coursseDiscription0"> <?php
-                                                                    foreach ($data as $index => $row) {
-                                                                        if ($index == 5) {
-                                                                            echo $row['Description'];
-                                                                        }
-                                                                    }
-                                                                    ?></h3>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" name="submit" onclick="submitForm('contentForm6')">Subscription</button><br><br>
+                        <div class="description"> <?php
+                                                    foreach ($data as $index => $row) {
+                                                        if ($index == 5) {
+                                                            echo $row['Description'];
+                                                        }
+                                                    }
+                                                    ?>
+                        </div>
                     </div>
                     <div class="d-flex border-top">
                         <small class="flex-fill text-center border-end py-2">
                             <i id="teacher_name0" class="fa fa-user-tie text-primary me-2"></i></small>
                         <small class="flex-fill text-center border-end py-2">
-                            <i id="coursseDuration0" class="fa fa-clock text-primary me-2"> <?php
-                                                                                            foreach ($data as $index => $row) {
-                                                                                                if ($index == 5) {
-                                                                                                    echo $row['Duration'];
-                                                                                                }
-                                                                                            }
-                                                                                            ?></i></small>
+                            <div class="duration"> <?php
+                                                    foreach ($data as $index => $row) {
+                                                        if ($index == 5) {
+                                                            echo $row['Duration'];
+                                                        }
+                                                    }
+                                                    ?>
+                            </div>
+                        </small>
                         <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30
                             Students</small>
                     </div>
                 </div>
-            </div>
-            <div class="row g-4 justify-content-center">
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="course-item bg-light">
-                        <div class="position-relative overflow-hidden">
-                            <a href="#">
-                                <img class="img-fluid" src=" <?php
-                                                                foreach ($data as $index => $row) {
-                                                                    if ($index == 6) {
-                                                                        echo $row['courses_image'];
-                                                                    }
-                                                                }
-                                                                ?>" alt="di">
-                            </a>
-                        </div>
-                        <div class="text-center p-4 pb-0">
-                            <h3 class="mb-0"></h3>
-                            <div class="mb-3">
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small>(123)</small>
-                            </div>
-                            <h2 class="mb-4">
-                                <?php
-                                foreach ($data as $index => $row) {
-                                    if ($index == 6) {
-                                        echo $row['title'];
-                                    }
-                                }
-                                ?>
-                            </h2><br>
-                            <h3 class="small" id="coursseDiscription0"> <?php
-                                                                        foreach ($data as $index => $row) {
-                                                                            if ($index == 6) {
-                                                                                echo $row['Description'];
-                                                                            }
-                                                                        }
-                                                                        ?></h3>
-                        </div>
-                        <div class="d-flex border-top">
-                            <small class="flex-fill text-center border-end py-2">
-                                <i id="teacher_name0" class="fa fa-user-tie text-primary me-2"></i></small>
-                            <small class="flex-fill text-center border-end py-2">
-                                <i id="coursseDuration0" class="fa fa-clock text-primary me-2"> <?php
-                                                                                                foreach ($data as $index => $row) {
-                                                                                                    if ($index == 6) {
-                                                                                                        echo $row['Duration'];
-                                                                                                    }
-                                                                                                }
-                                                                                                ?></i></small>
-                            <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30
-                                Students</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-                    <div class="course-item bg-light">
-                        <div class="position-relative overflow-hidden">
-                            <a href="#">
-                                <img class="img-fluid" src=" <?php
-                                                                foreach ($data as $index => $row) {
-                                                                    if ($index == 7) {
-                                                                        echo $row['courses_image'];
-                                                                    }
-                                                                }
-                                                                ?>" alt="di">
-                            </a>
-                        </div>
-                        <div class="text-center p-4 pb-0">
-                            <h3 class="mb-0"></h3>
-                            <div class="mb-3">
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small>(123)</small>
-                            </div>
-                            <h2 class="mb-4">
-                                <?php
-                                foreach ($data as $index => $row) {
-                                    if ($index == 7) {
-                                        echo $row['title'];
-                                    }
-                                }
-                                ?>
-                            </h2><br>
-                            <h3 class="small" id="coursseDiscription0"> <?php
-                                                                        foreach ($data as $index => $row) {
-                                                                            if ($index == 7) {
-                                                                                echo $row['Description'];
-                                                                            }
-                                                                        }
-                                                                        ?></h3>
-                        </div>
-                        <div class="d-flex border-top">
-                            <small class="flex-fill text-center border-end py-2">
-                                <i id="teacher_name0" class="fa fa-user-tie text-primary me-2"></i></small>
-                            <small class="flex-fill text-center border-end py-2">
-                                <i id="coursseDuration0" class="fa fa-clock text-primary me-2"> <?php
-                                                                                                foreach ($data as $index => $row) {
-                                                                                                    if ($index == 7) {
-                                                                                                        echo $row['Duration'];
-                                                                                                    }
-                                                                                                }
-                                                                                                ?></i></small>
-                            <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30
-                                Students</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
-                    <div class="course-item bg-light">
-                        <div class="position-relative overflow-hidden">
-                            <a href="#">
-                                <img class="img-fluid" src=" <?php
-                                                                foreach ($data as $index => $row) {
-                                                                    if ($index == 8) {
-                                                                        echo $row['courses_image'];
-                                                                    }
-                                                                }
-                                                                ?>" alt="di">
-                            </a>
-                        </div>
-                        <div class="text-center p-4 pb-0">
-                            <h3 class="mb-0"></h3>
-                            <div class="mb-3">
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small>(123)</small>
-                            </div>
-                            <h2 class="mb-4">
-                                <?php
-                                foreach ($data as $index => $row) {
-                                    if ($index == 8) {
-                                        echo $row['title'];
-                                    }
-                                }
-                                ?>
-                            </h2><br>
-                            <h3 class="small" id="coursseDiscription0"> <?php
-                                                                        foreach ($data as $index => $row) {
-                                                                            if ($index == 8) {
-                                                                                echo $row['Description'];
-                                                                            }
-                                                                        }
-                                                                        ?></h3>
-                        </div>
-                        <div class="d-flex border-top">
-                            <small class="flex-fill text-center border-end py-2">
-                                <i id="teacher_name0" class="fa fa-user-tie text-primary me-2"></i></small>
-                            <small class="flex-fill text-center border-end py-2">
-                                <i id="coursseDuration0" class="fa fa-clock text-primary me-2"> <?php
-                                                                                                foreach ($data as $index => $row) {
-                                                                                                    if ($index == 8) {
-                                                                                                        echo $row['Duration'];
-                                                                                                    }
-                                                                                                }
-                                                                                                ?></i></small>
-                            <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30
-                                Students</small>
-                        </div>
-                    </div>
-                </div>
-                <br><br><br>
-            </div>
-            <div class="row g-5 justify-content-center">
-                <div class="col-lg-4 col-md-6 wow fadeInUp br" data-wow-delay="0.1s">
-                    <div class="course-item bg-light">
-                        <div class="position-relative overflow-hidden">
-                            <a href="#">
-                                <img class="img-fluid" src=" <?php
-                                                                foreach ($data as $index => $row) {
-                                                                    if ($index == 9) {
-                                                                        echo $row['courses_image'];
-                                                                    }
-                                                                }
-                                                                ?>" alt="di">
-                            </a>
-                        </div>
-                        <div class="text-center p-4 pb-0">
-                            <h3 class="mb-0"></h3>
-                            <div class="mb-3">
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small>(123)</small>
-                            </div>
-                            <h2 class="mb-4">
-                                <?php
-                                foreach ($data as $index => $row) {
-                                    if ($index == 9) {
-                                        echo $row['title'];
-                                    }
-                                }
-                                ?>
-                            </h2><br>
-                            <h3 class="small" id="coursseDiscription0"> <?php
-                                                                        foreach ($data as $index => $row) {
-                                                                            if ($index == 9) {
-                                                                                echo $row['Description'];
-                                                                            }
-                                                                        }
-                                                                        ?></h3>
-                        </div>
-                        <div class="d-flex border-top">
-                            <small class="flex-fill text-center border-end py-2">
-                                <i id="teacher_name0" class="fa fa-user-tie text-primary me-2"></i></small>
-                            <small class="flex-fill text-center border-end py-2">
-                                <i id="coursseDuration0" class="fa fa-clock text-primary me-2"> <?php
-                                                                                                foreach ($data as $index => $row) {
-                                                                                                    if ($index == 9) {
-                                                                                                        echo $row['Duration'];
-                                                                                                    }
-                                                                                                }
-                                                                                                ?></i></small>
-                            <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30
-                                Students</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 wow fadeInUp" id="ten" data-wow-delay="0.3s">
-                    <div class="course-item bg-light">
-                        <div class="position-relative overflow-hidden">
-                            <a href="#">
-                                <img class="img-fluid" src=" <?php
-                                                                foreach ($data as $index => $row) {
-                                                                    if ($index == 10) {
-                                                                        echo $row['courses_image'];
-                                                                    }
-                                                                }
-                                                                ?>" alt="di">
-                            </a>
-                        </div>
-                        <div class="text-center p-4 pb-0">
-                            <h3 class="mb-0"></h3>
-                            <div class="mb-3">
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small>(123)</small>
-                            </div>
-                            <h2 class="mb-4">
-                                <?php
-                                foreach ($data as $index => $row) {
-                                    if ($index == 10) {
-                                        echo $row['title'];
-                                    } else {
-                                        echo '<style>#ten { display: none; }</style>';
-                                    }
-                                }
-                                ?>
-                            </h2><br>
-                            <h3 class="small" id="coursseDiscription0"> <?php
-                                                                        foreach ($data as $index => $row) {
-                                                                            if ($index == 10) {
-                                                                                echo $row['Description'];
-                                                                            }
-                                                                        }
-                                                                        ?></h3>
-                        </div>
-                        <div class="d-flex border-top">
-                            <small class="flex-fill text-center border-end py-2">
-                                <i id="teacher_name0" class="fa fa-user-tie text-primary me-2"></i></small>
-                            <small class="flex-fill text-center border-end py-2">
-                                <i id="coursseDuration0" class="fa fa-clock text-primary me-2"> <?php
-                                                                                                foreach ($data as $index => $row) {
-                                                                                                    if ($index == 10) {
-                                                                                                        echo $row['Duration'];
-                                                                                                    }
-                                                                                                }
-                                                                                                ?></i></small>
-                            <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30
-                                Students</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 wow fadeInUp" id="ten" data-wow-delay="0.3s">
-                    <div class="course-item bg-light">
-                        <div class="position-relative overflow-hidden">
-                            <a href="#">
-                                <img class="img-fluid" src=" <?php
-                                                                foreach ($data as $index => $row) {
-                                                                    if ($index == 11) {
-                                                                        echo $row['courses_image'];
-                                                                    }
-                                                                }
-                                                                ?>" alt="di">
-                            </a>
-                        </div>
-                        <div class="text-center p-4 pb-0">
-                            <h3 class="mb-0"></h3>
-                            <div class="mb-3">
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small>(123)</small>
-                            </div>
-                            <h2 class="mb-4">
-                                <?php
-                                foreach ($data as $index => $row) {
-                                    if ($index == 11) {
-                                        echo $row['title'];
-                                    } else {
-                                        echo '<style>#ten { display: none; }</style>';
-                                    }
-                                }
-                                ?>
-                            </h2><br>
-                            <h3 class="small" id="coursseDiscription0"> <?php
-                                                                        foreach ($data as $index => $row) {
-                                                                            if ($index == 11) {
-                                                                                echo $row['Description'];
-                                                                            }
-                                                                        }
-                                                                        ?></h3>
-                        </div>
-                        <div class="d-flex border-top">
-                            <small class="flex-fill text-center border-end py-2">
-                                <i id="teacher_name0" class="fa fa-user-tie text-primary me-2"></i></small>
-                            <small class="flex-fill text-center border-end py-2">
-                                <i id="coursseDuration0" class="fa fa-clock text-primary me-2"> <?php
-                                                                                                foreach ($data as $index => $row) {
-                                                                                                    if ($index == 11) {
-                                                                                                        echo $row['Duration'];
-                                                                                                    }
-                                                                                                }
-                                                                                                ?></i></small>
-                            <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30
-                                Students</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 wow fadeInUp" id="ten" data-wow-delay="0.3s">
-                    <div class="course-item bg-light">
-                        <div class="position-relative overflow-hidden">
-                            <a href="#">
-                                <img class="img-fluid" src=" <?php
-                                                                foreach ($data as $index => $row) {
-                                                                    if ($index == 12) {
-                                                                        echo $row['courses_image'];
-                                                                    }
-                                                                }
-                                                                ?>" alt="di">
-                            </a>
-                        </div>
-                        <div class="text-center p-4 pb-0">
-                            <h3 class="mb-0"></h3>
-                            <div class="mb-3">
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small>(123)</small>
-                            </div>
-                            <h2 class="mb-4">
-                                <?php
-                                foreach ($data as $index => $row) {
-                                    if ($index == 12) {
-                                        echo $row['title'];
-                                    } else {
-                                        echo '<style>#ten { display: none; }</style>';
-                                    }
-                                }
-                                ?>
-                            </h2><br>
-                            <h3 class="small" id="coursseDiscription0"> <?php
-                                                                        foreach ($data as $index => $row) {
-                                                                            if ($index == 12) {
-                                                                                echo $row['Description'];
-                                                                            }
-                                                                        }
-                                                                        ?></h3>
-                        </div>
-                        <div class="d-flex border-top">
-                            <small class="flex-fill text-center border-end py-2">
-                                <i id="teacher_name0" class="fa fa-user-tie text-primary me-2"></i></small>
-                            <small class="flex-fill text-center border-end py-2">
-                                <i id="coursseDuration0" class="fa fa-clock text-primary me-2"> <?php
-                                                                                                foreach ($data as $index => $row) {
-                                                                                                    if ($index == 12) {
-                                                                                                        echo $row['Duration'];
-                                                                                                    }
-                                                                                                }
-                                                                                                ?></i></small>
-                            <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30
-                                Students</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 wow fadeInUp" id="Eleven" data-wow-delay="0.5s">
-                    <div class="course-item bg-light">
-                        <div class="position-relative overflow-hidden">
-                            <a href="#">
-                                <img class="img-fluid" src=" <?php
-                                                                foreach ($data as $index => $row) {
-                                                                    if ($index == 13) {
-                                                                        echo $row['courses_image'];
-                                                                    }
-                                                                }
-                                                                ?>" alt="di">
-                            </a>
-                        </div>
-                        <div class="text-center p-4 pb-0">
-                            <h3 class="mb-0"></h3>
-                            <div class="mb-3">
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small>(123)</small>
-                            </div>
-                            <h2 class="mb-4">
-                                <?php
-                                foreach ($data as $index => $row) {
-                                    if ($index == 13) {
-                                        echo $row['title'];
-                                    } else {
-                                        echo '<style>#Eleven { display: none; }</style>';
-                                    }
-                                }
-                                ?>
-                            </h2><br>
-                            <h3 class="small" id="coursseDiscription0"> <?php
-                                                                        foreach ($data as $index => $row) {
-                                                                            if ($index == 14) {
-                                                                                echo $row['Description'];
-                                                                            }
-                                                                        }
-                                                                        ?></h3>
-                        </div>
-                        <div class="d-flex border-top">
-                            <small class="flex-fill text-center border-end py-2">
-                                <i id="teacher_name0" class="fa fa-user-tie text-primary me-2"></i></small>
-                            <small class="flex-fill text-center border-end py-2">
-                                <i id="coursseDuration0" class="fa fa-clock text-primary me-2"> <?php
-                                                                                                foreach ($data as $index => $row) {
-                                                                                                    if ($index == 11) {
-                                                                                                        echo $row['Duration'];
-                                                                                                    }
-                                                                                                }
-                                                                                                ?></i></small>
-                            <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30
-                                Students</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                <input type="hidden" id="contentInput1_contentForm6" name="co_title">
+                <input type="hidden" id="contentInput2_contentForm6" name="co_desc">
+                <input type="hidden" id="contentInput3_contentForm6" name="co_dur">
+
+
+            </form>
         </div>
-    </div>
-    </div>
-
-    <!-- Header End -->
-
-
-    <!-- Service Start -->
-
-    <!-- Service End -->
-
-    <!-- About Start -->
-    <div class="container-xxl py-5">
-        <div class="container">
-
-        </div>
-    </div>
-    <!-- About End -->
-
-    <hr style=" border-radius: 20px;border: 10px;">
-    <!-- starat add courses  -->
-
-    <div class="container-xxl py-5">
-        <div class="container">
-            <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-                <h6 class="section-title bg-white text-center text-primary px-3">New Coursses</h6>
-                <h1 class="mb-5">Add your new courses</h1>
-            </div>
-        </div>
-        <form action="courses.php" method="post">
-            <div class="col-lg-4 col-md-6 wow fadeInUp  " data-wow-delay="0.3s">
+        <!-- //////////////////////////////////////////////////////////////////////// -->
+        <div class="na col-lg-4 col-md-6 wow fadeInUp hoverable" data-wow-delay="0.1s">
+            <form id="contentForm7" method="POST" action="courses.php">
                 <div class="course-item bg-light">
-                    <div class="position-relative overflow-hidden ">
-                        <table class="m-3 ">
-                            <tr style="color:aqua;font-size: 20;">
-                                <td aria-rowspan="2">Add new Course</td>
-                            </tr><br>
-                            <tr>
-                                <td><label for="">Enter Titel:</label></td>
-                                <td><input type="text" name="title"><BR></td< /tr>
-                            <tr>
-                                <td><label for="">Enter Description:</label></td>
-                                <td><textarea type="text" name="desc"></textarea></td>
-                            </tr>
-                            <tr>
-                                <td><label for="">Enter Duration:</label></td>
-                                <td><input type="text" name="Duration"><BR></td< /tr><br>
-                            <tr>
-                                <!-- <td><label for="">categories:</label></td> -->
-                                <!-- <td><input type="text" name="cate"><BR></td< /tr><br> -->
-
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td collapse="2"><button name="submit" class="btn btn-primary border-radius dropdown-item-right">Add</button></td>
-                            </tr>
-                        </table>
+                    <div class="position-relative overflow-hidden">
+                        <a href="#">
+                            <img class="img-fluid" src=" <?php
+                                                            foreach ($data as $index => $row) {
+                                                                if ($index == 6) {
+                                                                    echo $row['courses_image'];
+                                                                }
+                                                            }
+                                                            ?>" alt="di">
+                        </a>
                     </div>
+                    <div class="text-center p-4 pb-0">
+                        <h3 class="mb-0"></h3>
+                        <div class="mb-3">
+                            <small class="fa fa-star text-primary"></small>
+                            <small class="fa fa-star text-primary"></small>
+                            <small class="fa fa-star text-primary"></small>
+                            <small class="fa fa-star text-primary"></small>
+                            <small class="fa fa-star text-primary"></small>
+                            <small>(123)</small>
+                        </div>
+                        <div class="titel">
+                            <?php
+                            foreach ($data as $index => $row) {
+                                if ($index == 6) {
+                                    echo $row['title'];
+                                }
+                            }
+                            ?>
+                        </div>
 
+                        <button type="submit" class="btn btn-primary" name="submit" onclick="submitForm('contentForm7')">Subscription</button><br><br>
+                        <div class="description"> <?php
+                                                    foreach ($data as $index => $row) {
+                                                        if ($index == 6) {
+                                                            echo $row['Description'];
+                                                        }
+                                                    }
+                                                    ?>
+                        </div>
+                    </div>
+                    <div class="d-flex border-top">
+                        <small class="flex-fill text-center border-end py-2">
+                            <i id="teacher_name0" class="fa fa-user-tie text-primary me-2"></i></small>
+                        <small class="flex-fill text-center border-end py-2">
+                            <div class="duration"> <?php
+                                                    foreach ($data as $index => $row) {
+                                                        if ($index == 6) {
+                                                            echo $row['Duration'];
+                                                        }
+                                                    }
+                                                    ?>
+                            </div>
+                        </small>
+                        <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30
+                            Students</small>
+                    </div>
                 </div>
-            </div>
+                <input type="hidden" id="contentInput1_contentForm7" name="co_title">
+                <input type="hidden" id="contentInput2_contentForm7" name="co_desc">
+                <input type="hidden" id="contentInput3_contentForm7" name="co_dur">
 
-        </form>
+
+            </form>
+        </div>
+        <!-- //////////////////////////////////////////////////////////////////////// -->
+
     </div>
-
-
-    <!--end add corsess Start -->
+    <!-- **************************************end of section one *********************************** -->
     <!-- Footer Start -->
     <div class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
         <div class="container py-5">
@@ -1167,22 +827,31 @@ echo "<br>Selected Role: " . $Specialization."<br>";
                 </div>
             </div>
         </div>
-        <!-- Footer End -->
-        <div>
-            <h1 id="User_Name"></h1>
-        </div>
+    </div>
+    <!-- Footer End -->
+    <div>
+        <h1 id="User_Name"></h1>
+    </div>
 
 
-        <!-- Back to Top -->
-        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
 
-        <!-- JavaScript Libraries -->
-        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="lib/wow/wow.min.js"></script>
-        <script src="lib/easing/easing.min.js"></script>
-        <script src="lib/waypoints/waypoints.min.js"></script>
-        <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <!-- JavaScript Libraries -->
+
+    <script>
+        function submitForm(formId) {
+            var co_title = document.querySelector('#' + formId + ' .titel').innerText;
+            var co_desc = document.querySelector('#' + formId + ' .description').innerText;
+            var co_dur = document.querySelector('#' + formId + ' .duration').innerText;
+            document.getElementById('contentInput1_' + formId).value = co_title;
+            document.getElementById('contentInput2_' + formId).value = co_desc;
+            document.getElementById('contentInput3_' + formId).value = co_dur;
+            document.getElementById(formId).submit();
+            window.location.href = "myCourses.php";  
+            return false;
+        }
+    </script>
 
 
 </body>

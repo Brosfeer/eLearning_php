@@ -32,8 +32,9 @@ if (isset($_POST['submit'])) {
                 exit;
               }elseif($row['userType'] =='Student'){
                 $_SESSION['user_name'] =$row['User_Name'];
+                $_SESSION['userType'] =$row['userType'];
                 // header('location:userProfile.php');
-                $nextPage = "userProfile.php";
+                $nextPage = "courses.php";
             echo "<script>window.location.href='$nextPage';</script>";
             exit;
               }

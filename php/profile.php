@@ -2,7 +2,7 @@
 include 'dbCon.php';
 session_start();
 
-
+$userType =$_SESSION["userType"];
 
 $user_id = $_SESSION['user_id'];
 echo $user_id;
@@ -155,9 +155,9 @@ if (isset($_POST['save_changes'])) {
                         <img class="border rounded-circle p-2 mx-auto mb-3" src="../img/testimonial-1.jpg"
                              style="width: 200px; height: 200px;">
                         <h1 class="display-2 text-black animated slideInDown" style="font-size: 30px;color: white;">
-                            YOUR_NAME:<h2 class="text-white large" ><?php echo "  " .$row['User_Name'];?></h2></h1><BR>
+                        <?php echo $userType?>_NAME:<h2 class="text-white large" ><?php echo "  " .$row['User_Name'];?></h2></h1><BR>
                         <h1 class="display-2 text-black animated slideInDown" style="font-size: 20px;color: white;">
-                            YOUR_EMAIL:<h2 id="E_mail0" class="text-white large" ><?php echo "  " .$row['E_mail'];?></h1>
+                        <?php echo $userType?>_EMAIL:<h2 id="E_mail0" class="text-white large" ><?php echo "  " .$row['E_mail'];?></h1>
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb justify-content-center">
                                 <li class="breadcrumb-item"><a class="text-white" href="index.html">Home</a></li>
@@ -172,233 +172,6 @@ if (isset($_POST['save_changes'])) {
             
 
         </div>
-    </div><br><br>
-    <div id="User_Name"></div>
-    <br><br>
-    <hr style="color: 20 ;border-radius: 20px;border: 10px;">
-    <div class="container">
-        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-            <h6 class="section-title bg-white text-center text-primary px-3">Courese</h6>
-            <h1 class="mb-5">Your Courese</h1>
-        </div<br>
-    </div>
-    <div class="row g-4 justify-content-center">
-        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-            <div class="course-item bg-light">
-                <div class="position-relative overflow-hidden">
-                    <a href="#">
-                        <img class="img-fluid" src="../img/java.png" alt="">
-                    </a>
-                </div>
-                <div class="text-center p-4 pb-0">
-                    <h3 class="mb-0"></h3>
-                    <div class="mb-3">
-                        <small class="fa fa-star text-primary"></small>
-                        <small class="fa fa-star text-primary"></small>
-                        <small class="fa fa-star text-primary"></small>
-                        <small class="fa fa-star text-primary"></small>
-                        <small class="fa fa-star text-primary"></small>
-                        <small>(123)</small>
-                    </div>
-                    <h2 class="mb-4" id="Courssetitle1"></h2><br>
-                    <h3 class="small" id="coursseDiscription0"></h3>
-                </div>
-                <div class="d-flex border-top">
-                    <small class="flex-fill text-center border-end py-2">
-                        <i id="teacher_name0"
-                           class="fa fa-user-tie text-primary me-2"></i></small>
-                    <small class="flex-fill text-center border-end py-2">
-                        <i id ="coursseDuration0" class="fa fa-clock text-primary me-2"></i></small>
-                    <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30
-                        Students</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-            <div class="course-item bg-light">
-                <div class="position-relative overflow-hidden">
-                    <a href="#">
-                        <img class="img-fluid" src="../img/css.jpg" alt="">
-                    </a>                    </div>
-                <div class="text-center p-4 pb-0">
-                    <h3 class="mb-0"></h3>
-                    <div class="mb-3">
-                        <small class="fa fa-star text-primary"></small>
-                        <small class="fa fa-star text-primary"></small>
-                        <small class="fa fa-star text-primary"></small>
-                        <small class="fa fa-star text-primary"></small>
-                        <small class="fa fa-star text-primary"></small>
-                        <small>(123)</small>
-                    </div>
-                    <h2 class="mb-4" id="coursseDuration"></h2><br>
-                    <h3 class="small" id="coursseDiscription1"></h3>                </div>
-                <div class="d-flex border-top">
-                    <small class="flex-fill text-center border-end py-2"><i
-                            class="fa fa-user-tie text-primary me-2"></i>Hassen flih</small>
-                    <small class="flex-fill text-center border-end py-2"><i
-                            class="fa fa-clock text-primary me-2"></i>1.49 Hrs</small>
-                    <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30
-                        Students</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
-            <div class="course-item bg-light">
-                <div class="position-relative overflow-hidden">
-                    <a href="#">
-                        <img class="img-fluid" src="../img/javascript.png" alt="">
-                    </a>
-                </div>
-                <div class="text-center p-4 pb-0">
-                    <h3 class="mb-0"></h3>
-                    <div class="mb-3">
-                        <small class="fa fa-star text-primary"></small>
-                        <small class="fa fa-star text-primary"></small>
-                        <small class="fa fa-star text-primary"></small>
-                        <small class="fa fa-star text-primary"></small>
-                        <small class="fa fa-star text-primary"></small>
-                        <small>(123)</small>
-                    </div>
-
-                </div>
-                <div class="d-flex border-top">
-                    <small class="flex-fill text-center border-end py-2"><i
-                            class="fa fa-user-tie text-primary me-2"></i>Zero</small>
-                    <small class="flex-fill text-center border-end py-2"><i
-                            class="fa fa-clock text-primary me-2"></i>1.49 Hrs</small>
-                    <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30
-                        Students</small>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-</div>
-</div>
-
-<!-- Header End -->
-
-
-<!-- Service Start -->
-
-<!-- Service End -->
-
-<!-- About Start -->
-<div class="container-xxl py-5">
-    <div class="container">
-
-    </div>
-</div>
-<!-- About End -->
-
-<hr style=" border-radius: 20px;border: 10px;">
-<!-- Team Start -->
-
-<div class="container-xxl py-5">
-    <div class="container">
-        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-            <h6 class="section-title bg-white text-center text-primary px-3">New Coursses</h6>
-            <h1 class="mb-5">Sign In New Coursses</h1>
-        </div>
-        <div class="row g-4">
-            <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                <div class="team-item bg-light">
-                    <div class="overflow-hidden">
-                        <a href="#">
-                            <img class="img-fluid" src="../img/re2.png" alt="">
-                        </a>
-                    </div>
-                    <div class="position-relative d-flex justify-content-center" style="margin-top: -23px;">
-                        <div class="bg-light d-flex justify-content-center pt-2 px-1">
-                            <a class="btn btn-sm-square btn-primary mx-1" href=""><i
-                                    class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-sm-square btn-primary mx-1" href=""><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-sm-square btn-primary mx-1" href=""><i
-                                    class="fab fa-instagram"></i></a>
-                        </div>
-                    </div>
-                    <div class="text-center p-4">
-                        <h3 class="mb-5">React Js</h3>
-                        <h5 class="mb-0">Hany</h5>
-                        <small>Developer</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-                <div class="team-item bg-light">
-                    <div class="overflow-hidden">
-                        <a href="#">
-                            <img class="img-fluid" src="../img/node.png" alt="">
-                        </a>
-                    </div>
-                    <div class="position-relative d-flex justify-content-center" style="margin-top: -23px;">
-                        <div class="bg-light d-flex justify-content-center pt-2 px-1">
-                            <a class="btn btn-sm-square btn-primary mx-1" href=""><i
-                                    class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-sm-square btn-primary mx-1" href=""><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-sm-square btn-primary mx-1" href=""><i
-                                    class="fab fa-instagram"></i></a>
-                        </div>
-                    </div>
-                    <div class="text-center p-4">
-                        <h3 class="mb-5">Node Js</h3>
-                        <h5 class="mb-0">Yasmeen</h5>
-                        <small>Developer</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
-                <div class="team-item bg-light">
-                    <div class="overflow-hidden">
-                        <a href="#">
-                            <img class="img-fluid" src="../img/AngularJS (1).png" alt="">
-                        </a>
-                    </div>
-                    <div class="position-relative d-flex justify-content-center" style="margin-top: -23px;">
-                        <div class="bg-light d-flex justify-content-center pt-2 px-1">
-                            <a class="btn btn-sm-square btn-primary mx-1" href=""><i
-                                    class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-sm-square btn-primary mx-1" href=""><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-sm-square btn-primary mx-1" href=""><i
-                                    class="fab fa-instagram"></i></a>
-                        </div>
-                    </div>
-                    <div class="text-center p-4">
-                        <h3 class="mb-5">Angular Js</h3>
-                        <h5 class="mb-0">Najeeb</h5>
-                        <small>Designation</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.7s">
-                <div class="team-item bg-light">
-                    <div class="overflow-hidden">
-                        <a href="#">
-                            <img class="img-fluid" src="../img/bootstrap.png" alt="">
-                        </a>
-                    </div>
-                    <div class="position-relative d-flex justify-content-center" style="margin-top: -23px;">
-                        <div class="bg-light d-flex justify-content-center pt-2 px-1">
-                            <a class="btn btn-sm-square btn-primary mx-1" href=""><i
-                                    class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-sm-square btn-primary mx-1" href=""><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-sm-square btn-primary mx-1" href=""><i
-                                    class="fab fa-instagram"></i></a>
-                        </div>
-                    </div>
-                    <div class="text-center p-4">
-                        <h3 class="mb-5">BootStrap</h3>
-                        <h5 class="mb-0">Alice</h5>
-                        <small>Developer</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Team End -->
-
-
 <!-- Footer Start -->
 <div class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
     <div class="container py-5">
@@ -470,8 +243,7 @@ if (isset($_POST['save_changes'])) {
         </div>
     </div>
     <!-- Footer End -->
-    <div ><h1 id="User_Name"></h1></div>
-
+    
 
     <!-- Back to Top -->
     <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
@@ -486,6 +258,7 @@ if (isset($_POST['save_changes'])) {
     
     </script>        <script src="js/main.js"></script>
     <script src="lib/jQuery/jquery-3.5.1.min.js" type="text/javascript"></script>
+
 </body>
 
 </html>

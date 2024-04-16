@@ -1,5 +1,5 @@
 <?php
-require "controller/updateCourse.php"
+require "controller/updateCourseController.php"
 
 ?>
 <!DOCTYPE html>
@@ -54,8 +54,8 @@ require "controller/updateCourse.php"
                             <ul class="categor-list">
                                 <ul>
                                     <?php
-                                    displayTitles();
-                                    echo "the ss" . $selectedTitle;
+                                    getCoursesDetails();
+                                    // echo "the ss" . $selectedTitle;
                                     // echo $selectedTitle;
 
                                     // You can use the $selectedTitle variable here as needed
@@ -95,17 +95,17 @@ require "controller/updateCourse.php"
                                 <div class="news-head" style="width: 800px;">
                                     <form action="" method="post">
                                         <input type="text" value="<?php
-                                                                    if (!empty($selectedTitle)) {
-                                                                        $courseDetails = getCourseDetails();
+                                                                    // if (!empty($selectedTitle)) {
+                                                                    //     $courseDetails = getCourseDetails();
 
-                                                                        // Display the course details
-                                                                        if ($courseDetails) {
-                                                                            echo  $courseDetails['title'];
-                                                                            // ... display other details as needed
-                                                                        } else {
-                                                                            echo "Course not found.";
-                                                                        }
-                                                                    }
+                                                                    //     // Display the course details
+                                                                    //     if ($courseDetails) {
+                                                                    //         echo  $courseDetails['title'];
+                                                                    //         // ... display other details as needed
+                                                                    //     } else {
+                                                                    //         echo "Course not found.";
+                                                                    //     }
+                                                                    // }
                                                                     ?>" name="title">
                                         <input type='submit' value='Save'>
 

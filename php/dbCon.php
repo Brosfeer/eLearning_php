@@ -1,4 +1,4 @@
-<?php 
+<?php
 // echo "hi ms osama welcome to your db_php";
 // $host ="localhost";
 // $db="e_learning";
@@ -18,10 +18,10 @@
 // }catch(\PDOException $e){
 //     echo "the exption is ".$e->getMessage();
 // }
-$con =mysqli_connect('localhost','root','admin123','e_learning');
+$con = mysqli_connect('localhost', 'root', '', 'e_learning');
 
-if(!$con){
-    echo "Error :" .mysqli_connect_error();
+if (!$con) {
+    echo "Error :" . mysqli_connect_error();
 }
 
 // $user_name =$_POST['user_name'];
@@ -29,5 +29,3 @@ if(!$con){
 // if(isset($_POST['submit'])){
 //     echo $user_name . '  ' . $password;
 // }
-
-?>

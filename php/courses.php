@@ -84,9 +84,9 @@ if (isset($_POST['co_title'])) {
                     $subscribCourse = $con->prepare($sql);
                     $subscribCourse->bind_param("ss", $user_id, $course_id);
                     $subscribCourse->execute();
-                    $subscribCourse->close();  $nextPage = "myCourses.php";
+                    $subscribCourse->close();
+                    $nextPage = "myCourses.php";
                     echo "<script>window.location.href='$nextPage';</script>";
-                    
                 }
 
                 $checkStmt->close();
@@ -847,7 +847,7 @@ if (isset($_POST['co_title'])) {
             document.getElementById('contentInput2_' + formId).value = co_desc;
             document.getElementById('contentInput3_' + formId).value = co_dur;
             document.getElementById(formId).submit();
-            window.location.href = "myCourses.php";  
+            window.location.href = "myCourses.php";
             return false;
         }
     </script>

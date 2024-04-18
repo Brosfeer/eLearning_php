@@ -269,8 +269,13 @@ if (isset($_POST['co_title'])) {
                             }
                             ?>
                         </div>
-
+                        <form action="updateCourseVeiw.php">
                         <button type="submit" class="btn btn-primary" name="submit" onclick="submitForm('contentForm1')">Subscription</button><br><br>
+                        <?php
+                            $_SESSION['course_id']=$row['course_id'];
+                            ?>
+                        </form><br><br>
+                        
                         <div class="description"> <?php
                                                     foreach ($data as $index => $row) {
                                                         if ($index == 0) {
@@ -339,8 +344,12 @@ if (isset($_POST['co_title'])) {
                             }
                             ?>
                         </div>
-
-                        <button type="submit" class="btn btn-primary" name="submit" onclick="submitForm('contentForm2')">Subscription</button><br><br>
+                        <form action="updateCourseVeiw.php">
+                            <button type="submit" class="btn btn-primary" name="submit" >Subscription</button><br><br>
+                            <?php
+                            $_SESSION['course_id'] = $row['course_id'];
+                            ?>
+                        </form><br><br>
                         <div class="description"> <?php
                                                     foreach ($data as $index => $row) {
                                                         if ($index == 1) {
@@ -409,8 +418,13 @@ if (isset($_POST['co_title'])) {
                             }
                             ?>
                         </div>
+                        <form action="updateCourseVeiw.php">
+                            <button type="submit" class="btn btn-primary" name="submit" >Subscription</button><br><br>
+                            <?php
+                            $_SESSION['course_id'] = $row['course_id'];
+                            ?>
+                        </form><br><br>
 
-                        <button type="submit" class="btn btn-primary" name="submit" onclick="submitForm('contentForm3')">Subscription</button><br><br>
                         <div class="description"> <?php
                                                     foreach ($data as $index => $row) {
                                                         if ($index == 2) {
@@ -479,12 +493,18 @@ if (isset($_POST['co_title'])) {
                             foreach ($data as $index => $row) {
                                 if ($index == 3) {
                                     echo $row['title'];
+                                    $_SESSION['course_id'] = $row['course_id'];
                                 }
                             }
                             ?>
                         </div>
+                        <form action="updateCourseVeiw.php">
+                            <button type="submit" class="btn btn-primary" name="submit" >Subscription</button><br><br>
+                            <?php
+                            $_SESSION['course_id'] = $row['course_id'];
+                            ?>
+                        </form><br><br>
 
-                        <button type="submit" class="btn btn-primary" name="submit" onclick="submitForm('contentForm4')">Subscription</button><br><br>
                         <div class="description"> <?php
                                                     foreach ($data as $index => $row) {
                                                         if ($index == 3) {
@@ -553,8 +573,12 @@ if (isset($_POST['co_title'])) {
                             }
                             ?>
                         </div>
-
-                        <button type="submit" class="btn btn-primary" name="submit" onclick="submitForm('contentForm5')">Subscription</button><br><br>
+                        <form action="updateCourseVeiw.php">
+                            <button type="submit" class="btn btn-primary" name="submit">Subscription</button><br><br>
+                            <?php
+                            $_SESSION['course_id'] = $row['course_id'];
+                            ?>
+                        </form><br><br>
                         <div class="description"> <?php
                                                     foreach ($data as $index => $row) {
                                                         if ($index == 4) {
@@ -624,7 +648,12 @@ if (isset($_POST['co_title'])) {
                             ?>
                         </div>
 
-                        <button type="submit" class="btn btn-primary" name="submit" onclick="submitForm('contentForm6')">Subscription</button><br><br>
+                        <form action="updateCourseVeiw.php">
+                            <button type="submit" class="btn btn-primary" name="submit" >Subscription</button>
+                            <?php
+                            $_SESSION['course_id'] = $row['course_id'];
+                            ?>
+                        </form><br><br>
                         <div class="description"> <?php
                                                     foreach ($data as $index => $row) {
                                                         if ($index == 5) {
@@ -688,6 +717,7 @@ if (isset($_POST['co_title'])) {
                             foreach ($data as $index => $row) {
                                 if ($index == 6) {
                                     echo $row['title'];
+                                    $_SESSION['course_id'] = $row['course_id'];
                                 }
                             }
                             ?>

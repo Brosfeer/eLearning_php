@@ -3,7 +3,7 @@
 include 'dbCon.php';
 // if (isset($_SESSION["course_id"])) {
 
-// $course_id = $_SESSION["user_id"];
+$course_id = $_SESSION['course_id'];
 
 // echo "the course_id = $course_id";
 $course_id = 52;

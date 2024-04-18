@@ -15,7 +15,7 @@ if (isset($_POST['submit'])) {
     $co_title = $_POST['co_title'];
     $description = $_POST['desc'];
     $duration = $_POST['duration'];
-    $image = $_FILES['image']['name']; // Assuming you'll store the image filename in the database
+    $image = $_FILES['image']['name']; 
     // echo $image;
 
 
@@ -24,7 +24,7 @@ if (isset($_POST['submit'])) {
     $le_title = $_POST['le_title'];
     $content = $_POST['content'];
     $vid_url = $_POST['vid_url'];
-    $ext_res = $_FILES['ext_res']['name']; // Assuming you'll store the external resource filename in the database
+    $ext_res = $_FILES['ext_res']['name']; 
 
     // Handle file uploads
     $image_tmp = $_FILES['image']['tmp_name'];

@@ -18,7 +18,7 @@
 // }catch(\PDOException $e){
 //     echo "the exption is ".$e->getMessage();
 // }
-$con =mysqli_connect('localhost','root','admin123','e_learning');
+$con =mysqli_connect('localhost','root','','e_learning');
 
 if(!$con){
     echo "Error :" .mysqli_connect_error();

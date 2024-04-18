@@ -19,31 +19,8 @@ if (isset($_SESSION["user_id"])) {
         $data[] = $row;
     }
 
-    // // تحويل المصفوفة إلى سلسلة JSON
-    // $jsonString = json_encode($data);
-
-    // // حفظ السلسلة JSON في ملف
-    // file_put_contents('data.json', $jsonString);
-
-    // عرض البيانات حسب الفهرس
-
     foreach ($data as $index => $row) {
-        // echo "<tr>";
-        // echo "<td>" . $row['User_Name'] . "</td>";
-        // echo "<td>" . $row['E_mail'] . "</td>";
-
-        // echo "</tr>";
-
-        // العرض في <div> حسب الفهرس المحدد
-        if ($index == 2) { // الفهرس المحدد
-            // echo "<div>title: " . $row['title'] . "</div>";
-            // echo "<div>Description: " . $row['Description'] . "</div>";
-            // echo "<div>course_id: " . $row['course_id'] . "</div>";
-            // echo "<div>courses_image: " . $row['courses_image'] . "</div>";
-            // echo "<div>Duration: " . $row['Duration'] . "</div>";
-        }
     }
-    // echo "</table>";
 } else {
     $loginPage = "Login.php";
     echo "<script>window.location.href='$loginPage';</script>";
@@ -84,9 +61,9 @@ if (isset($_POST['co_title'])) {
                     $subscribCourse = $con->prepare($sql);
                     $subscribCourse->bind_param("ss", $user_id, $course_id);
                     $subscribCourse->execute();
-                    $subscribCourse->close();  $nextPage = "myCourses.php";
+                    $subscribCourse->close();
+                    $nextPage = "myCourses.php";
                     echo "<script>window.location.href='$nextPage';</script>";
-                    
                 }
 
                 $checkStmt->close();
@@ -170,15 +147,9 @@ if (isset($_POST['co_title'])) {
 
 <body>
 
-    <!-- <form action="courses.php" method="post">
-        <div id="image0">my image</div>
-        <div id="title0">web advance</div>
-        <button id="submitContent" type="submit">save</button>
-    </form> -->
-
     <!-- Navbar Start -->
     <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
-        <a href="index.html" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
+        <a href="../index.html" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
             <h2 class="m-0 text-primary"><i class="fa fa-book me-3"></i>eLEARNING</h2>
         </a>
         <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
@@ -241,7 +212,8 @@ if (isset($_POST['co_title'])) {
                             <li class="breadcrumb-item"><a class="text-white" href="#">Pages</a></li>
                             <li class="breadcrumb-item text-white active" aria-current="page">About</li>
                         </ol>
-                    </nav><a href="profile.php">
+                    </nav>
+                    <a href="profile.php">
                         <button class="btn btn-primary" onclick="profile.php">change your setting</button></a>
                 </div>
             </div>
@@ -255,6 +227,8 @@ if (isset($_POST['co_title'])) {
         <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
             <h6 class="section-title bg-white text-center text-primary px-3">Courese</h6>
             <h1 class="mb-5">Our Courese</h1>
+            <a href="addCourses.php">
+                <button class="btn btn-primary" onclick="addCourse.php">Add New Course</button></a>
         </div><br>
     </div>
     <!--
@@ -847,7 +821,7 @@ if (isset($_POST['co_title'])) {
             document.getElementById('contentInput2_' + formId).value = co_desc;
             document.getElementById('contentInput3_' + formId).value = co_dur;
             document.getElementById(formId).submit();
-            window.location.href = "myCourses.php";  
+            window.location.href = "myCourses.php";
             return false;
         }
     </script>

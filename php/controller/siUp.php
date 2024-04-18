@@ -29,6 +29,7 @@ if (isset($_POST['submit'])) {
     $password = $_POST['password'];
     $confirm_password    = $_POST['confirm_password'];
     $userType = $_POST['userType'];
+    echo $userType;
 
     $spec = $_POST['spec'];
     $desc = $_POST['desc'];

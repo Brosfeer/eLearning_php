@@ -1,13 +1,4 @@
 <?php 
-//****************************START VREATE SESSION***********************************
-
-//***********************************************************************************
-//****************************END VREATE SESSION*************************************
-
-
-//***********************************************************************************
-//****************************START INCLUED FILES************************************
-
 include 'dbCon.php';
 if (isset($_POST['submit'])) {
     $user_name = $_POST['user_name'];
@@ -26,8 +17,9 @@ if (isset($_POST['submit'])) {
              $user_id =$_SESSION['user_id'] = $row['user_id'];
              if ($row['userType'] =='Teacher'){
                 $_SESSION['Teacher_name'] =$row['User_Name'];
+                $_SESSION['userType'] =$row['userType'];
                 // header('location:teacherProfile.php');
-                $nextPage = "courses.php";
+                $nextPage = "teacherPage.php";
                 echo "<script>window.location.href='$nextPage';</script>";
                 exit;
               }elseif($row['userType'] =='Student'){

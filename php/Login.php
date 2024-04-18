@@ -1,6 +1,16 @@
-<?php 
+<?php
 session_start();
 require "../header.html";
+if (isset($_SESSION['user_id'])) {
+    if ($_SESSION['userType'] == 'Student') {
+        $nextPage = "Courses.php";
+        echo "<script>window.location.href='$nextPage';</script>";
+    } else if ($_SESSION['userType'] == 'Teacher') {
+        $nextPage = "TeacherPage.php";
+        echo "<script>window.location.href='$nextPage';</script>";
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -42,7 +52,7 @@ require "../header.html";
             <input type="password" name="password" placeholder="كلمة المرور" required>
             <input type="submit" class="submit-log" name="submit" value="تسجيل الدخول">
         </form>
-        <p id="error-message"><?php include 'validat.php'?></p>
+        <p id="error-message"><?php include 'validat.php' ?></p>
         <p>Don't have an account? <a href="SignUp.php">Sign up</a></p>
     </div>
     <!-- Carousel End -->

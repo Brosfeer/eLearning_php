@@ -11,7 +11,7 @@ if (isset($_SESSION["user_id"])) {
     echo $user_id;
     echo "<br> $userType";
 
-    $userData=mysqli_prepare($con, "SELECT  User_Name, E_mail FROM users WHERE user_id=?");
+    $userData = mysqli_prepare($con, "SELECT  User_Name, E_mail FROM users WHERE user_id=?");
     mysqli_stmt_bind_param($userData, "s", $user_id);
     mysqli_stmt_execute($userData);
     $resultuserData = mysqli_stmt_get_result($userData);
@@ -28,36 +28,43 @@ if (isset($_SESSION["user_id"])) {
     while ($row = mysqli_fetch_assoc($result)) {
         $data[] = $row;
     }
-    
+
 
     ////////////////////////////////////////////////////////////////////////////
     /////////////////////////delete courses/////////////////////////////////////if (isset($user_id)) {
     echo "ho ho";
-    
+
     if (isset($_POST['submit'])) {
         echo "<br><br>hi ";
         $title = $_POST['co_title'];
         echo $title;
-        
+
         if (isset($con)) {
             // Retrieve the course_id
             $stmt = mysqli_prepare($con, "SELECT course_id FROM courses WHERE title = ?");
             mysqli_stmt_bind_param($stmt, "s", $title);
             mysqli_stmt_execute($stmt);
             mysqli_stmt_bind_result($stmt, $course_id);
+            $result = mysqli_stmt_get_result($stmt);
 
-            if (mysqli_stmt_fetch($stmt)) {
-                echo "<br>COURSE_ID: " . $course_id;
+
+            if (mysqli_num_rows($result) > 0) {
+                $row = mysqli_fetch_assoc($result);
+                $course_id = $_SESSION['course_id'] = $row['course_id'];
+
                 mysqli_stmt_close($stmt);
 
                 // Construct the DELETE query
-                $sql = "DELETE FROM course_progress WHERE User_id = ? AND course_id = ?";
-                $stmt = mysqli_prepare($con, $sql);
-                mysqli_stmt_bind_param($stmt, "ii", $user_id, $course_id);
+                // $sql = "DELETE FROM course_progress WHERE User_id = ? AND course_id = ?";
+                // $stmt = mysqli_prepare($con, $sql);
+                // mysqli_stmt_bind_param($stmt, "ii", $user_id, $course_id);
+
 
                 // Execute the query
-                if (mysqli_stmt_execute($stmt)) {
-                    echo "Row deleted successfully";
+                if (isset($course_id)) {
+                    echo "Row show successfully";
+                    $nextPage = "Lessons.php";
+                    echo "<script>window.location.href='$nextPage';</script>";
                 } else {
                     echo "Error deleting row: " . mysqli_error($con);
                 }
@@ -72,6 +79,8 @@ if (isset($_SESSION["user_id"])) {
 
         mysqli_close($con);
     }
+} else if (isset($_POST['show'])) {
+    echo "hi mohammed";
 } else {
     echo "User ID not set.";
 }
@@ -249,7 +258,6 @@ if (isset($_SESSION["user_id"])) {
         <div class="row g-4 justify-content-center">
             <div class="col-lg-4 col-md-6 wow fadeInUp hoverable" id="zero" data-wow-delay="0.1s">
                 <form id="contentForm1" method="POST" action="myCourses.php">
-
                     <div class="course-item bg-light">
                         <div class="position-relative overflow-hidden">
                             <a href="#">
@@ -285,7 +293,7 @@ if (isset($_SESSION["user_id"])) {
                                 }
                                 ?>
                             </div><br>
-                            <button type="submit" style="background:black; border-radius:10px" class="btn btn-primary" name="submit" onclick="submitForm('contentForm1')">Delete</button><br><br>
+                            <button type="submit" style="background:black; border-radius:10px" class="btn btn-primary" name="submit" onclick="submitForm('contentForm1')">show</button><br><br>
                             <?php
                             foreach ($data as $index => $row) {
                                 if ($index == 0) {
@@ -313,67 +321,72 @@ if (isset($_SESSION["user_id"])) {
                 </form>
             </div>
             <div class="col-lg-4 col-md-6 wow fadeInUp" id="one" data-wow-delay="0.3s">
-                <div class="course-item bg-light">
-                    <div class="position-relative overflow-hidden">
-                        <a href="#">
-                            <img class="img-fluid" src=" <?php
-                                                            foreach ($data as $index => $row) {
-                                                                if ($index == 1) {
-                                                                    echo $row['courses_image'];
+                <form id="contentForm2" method="POST" action="myCourses.php">
+                    <div class="course-item bg-light">
+                        <div class="position-relative overflow-hidden">
+                            <a href="#">
+                                <img class="img-fluid" src=" <?php
+                                                                foreach ($data as $index => $row) {
+                                                                    if ($index == 1) {
+                                                                        echo $row['courses_image'];
+                                                                    }
                                                                 }
-                                                            }
-                                                            ?>" alt="di">
-                        </a>
-                    </div>
-                    <div class="text-center p-4 pb-0">
-                        <h3 class="mb-0"></h3>
-                        <div class="mb-3">
-                            <small class="fa fa-star text-primary"></small>
-                            <small class="fa fa-star text-primary"></small>
-                            <small class="fa fa-star text-primary"></small>
-                            <small class="fa fa-star text-primary"></small>
-                            <small class="fa fa-star text-primary"></small>
-                            <small>(123)</small>
+                                                                ?>" alt="di">
+                            </a>
                         </div>
-                        <h2 class="mb-4">
+                        <div class="text-center p-4 pb-0">
+                            <h3 class="mb-0"></h3>
+                            <div class="mb-3">
+                                <small class="fa fa-star text-primary"></small>
+                                <small class="fa fa-star text-primary"></small>
+                                <small class="fa fa-star text-primary"></small>
+                                <small class="fa fa-star text-primary"></small>
+                                <small class="fa fa-star text-primary"></small>
+                                <small>(123)</small>
+                            </div>
+                            <div class="title">
+                                <?php
+                                foreach ($data as $index => $row) {
+                                    if ($index == 1) {
+                                        if (isset($index)) {
+                                            echo $row['title'];
+                                        } else {
+                                            echo '<style>#one { display: none; }</style>';
+                                        }
+                                    }
+                                }
+                                ?>
+                            </div><br>
+                            <button type="submit" style="background:black; border-radius:10px" class="btn btn-primary" name="submit" onclick="submitForm('contentForm2')">show</button><br><br>
                             <?php
                             foreach ($data as $index => $row) {
                                 if ($index == 1) {
-                                    if (isset($index)) {
-                                        echo $row['title'];
-                                    } else {
-                                        echo '<style>#one { display: none; }</style>';
-                                    }
+                                    echo $row['Description'];
                                 }
                             }
-                            ?>
-                        </h2><br>
-                        <h3 class="small" id="coursseDiscription0"> <?php
-                                                                    foreach ($data as $index => $row) {
-                                                                        if ($index == 1) {
-                                                                            echo $row['Description'];
-                                                                        }
-                                                                    }
-                                                                    ?></h3>
-                    </div>
-                    <div class="d-flex border-top">
-                        <small class="flex-fill text-center border-end py-2">
-                            <i id="teacher_name0" class="fa fa-user-tie text-primary me-2"></i></small>
-                        <small class="flex-fill text-center border-end py-2">
-                            <i id="coursseDuration0" class="fa fa-clock text-primary me-2"> <?php
-                                                                                            foreach ($data as $index => $row) {
-                                                                                                if ($index == 1) {
-                                                                                                    echo $row['Duration'];
+                            ?></h3>
+                        </div>
+                        <div class="d-flex border-top">
+                            <small class="flex-fill text-center border-end py-2">
+                                <i id="teacher_name0" class="fa fa-user-tie text-primary me-2"></i></small>
+                            <small class="flex-fill text-center border-end py-2">
+                                <i id="coursseDuration0" class="fa fa-clock text-primary me-2"> <?php
+                                                                                                foreach ($data as $index => $row) {
+                                                                                                    if ($index == 1) {
+                                                                                                        echo $row['Duration'];
+                                                                                                    }
                                                                                                 }
-                                                                                            }
-                                                                                            ?></i></small>
-                        <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30
-                            Students</small>
+                                                                                                ?></i></small>
+                            <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30
+                                Students</small>
+                        </div>
                     </div>
-                </div>
+                    <input type="hidden" id="contentInput1_contentForm2" name="co_title">
+                </form>
             </div>
             <div class="col-lg-4 col-md-6 wow fadeInUp hoverable" id="two" data-wow-delay="0.5s">
-                <div class="course-item bg-light">
+            <form id="contentForm3" method="POST" action="myCourses.php">
+            <div class="course-item bg-light">
                     <div class="position-relative overflow-hidden">
                         <a href="#">
                             <img class="img-fluid" src=" <?php
@@ -395,8 +408,21 @@ if (isset($_SESSION["user_id"])) {
                             <small class="fa fa-star text-primary"></small>
                             <small>(123)</small>
                         </div>
-                        </h2><br>
-                        <h3 class="small" id="coursseDiscription0"> <?php
+                        <div class="title">
+                                <?php
+                                foreach ($data as $index => $row) {
+                                    if ($index == 2) {
+                                        if (isset($index)) {
+                                            echo $row['title'];
+                                        } else {
+                                            echo '<style>#one { display: none; }</style>';
+                                        }
+                                    }
+                                }
+                                ?>
+                            </div><br>
+                            <button type="submit" style="background:black; border-radius:10px" class="btn btn-primary" name="submit" onclick="submitForm('contentForm3')">show</button><br><br>
+ <?php
                                                                     foreach ($data as $index => $row) {
                                                                         if ($index == 2) {
                                                                             echo $row['Description'];
@@ -418,13 +444,17 @@ if (isset($_SESSION["user_id"])) {
                         <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30
                             Students</small>
                     </div>
+                    <input type="hidden" id="contentInput1_contentForm3" name="co_title">
                 </div>
+            </form>
             </div>
             <br><br><br>
         </div>
         <div class="row g-5 justify-content-center">
             <div class="col-lg-4 col-md-6 wow fadeInUp br" id="three " data-wow-delay="0.1s">
-                <div class="course-item bg-light">
+            <form id="contentForm4" method="POST" action="myCourses.php">
+
+            <div class="course-item bg-light">
                     <div class="position-relative overflow-hidden">
                         <a href="#">
                             <img class="img-fluid" src=" <?php
@@ -446,7 +476,7 @@ if (isset($_SESSION["user_id"])) {
                             <small class="fa fa-star text-primary"></small>
                             <small>(123)</small>
                         </div>
-                        <h2 class="mb-4">
+                        <div class="title">
                             <?php
                             foreach ($data as $index => $row) {
                                 if ($index == 3) {
@@ -456,9 +486,10 @@ if (isset($_SESSION["user_id"])) {
                                 }
                             }
                             ?>
-                        </h2><br>
- 
-                        <h3 class="small"> <?php
+                        </div><br>
+
+                        <h3 class="small">                            <button type="submit" style="background:black; border-radius:10px" class="btn btn-primary" name="submit" onclick="submitForm('contentForm4')">show</button><br><br>
+ <?php
                                             foreach ($data as $index => $row) {
                                                 if ($index == 3) {
                                                     echo $row['Description'];
@@ -480,7 +511,10 @@ if (isset($_SESSION["user_id"])) {
                         <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30
                             Students</small>
                     </div>
+                    <input type="hidden" id="contentInput1_contentForm4" name="co_title">
+
                 </div>
+            </form>
             </div>
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
                 <div class="course-item bg-light">

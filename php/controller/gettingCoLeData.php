@@ -20,7 +20,7 @@ function getCoursesDetails()
 {
     global $con, $course_id, $co_title, $co_desc, $co_duration;
     //    retrive the data of the course 
-    $course_id = 52; // demo course ID
+    // $course_id = 52; // demo course ID
     $stmt = mysqli_prepare($con, "SELECT title, Description, duration FROM courses WHERE course_id=?");
     if ($stmt === false) {
         die("Error preparing statement: " . mysqli_error($con));

@@ -1,6 +1,8 @@
 <?php
 require "../php/header&footer/header.html";
 include("controller/gettingCoLeData.php");
+// session_start();
+$_SESSION['course_id'] = $_POST['course_id'];
 require "controller/updateCourseController.php";
 ?>
 
@@ -78,21 +80,21 @@ require "controller/updateCourseController.php";
                             <tr>
                                 <td><label for="co_title">Edit Course Titel:</label></td>
                                 <td><input type="text" name="new_co_title" class="inWid" value="<?php
-                                                                                            getCoursesDetails();
-                                                                                            echo $co_title;
-                                                                                            ?>"></td>
+                                                                                                getCoursesDetails();
+                                                                                                echo $co_title;
+                                                                                                ?>"></td>
                             </tr>
                             <tr>
                                 <td><label for="description">Edit Description:</label></td>
                                 <td><textarea type="text" name="new_desc" class="inWid"><?php
-                                                                                    echo $co_desc;
-                                                                                    ?></textarea></td>
+                                                                                        echo $co_desc;
+                                                                                        ?></textarea></td>
                             </tr>
                             <tr>
                                 <td><label for="duration">Edit the Duration:</label></td>
                                 <td><input type="text" name="new_duration" class="inWid" value="<?php
-                                                                                            echo $co_duration;
-                                                                                            ?>"></td>
+                                                                                                echo $co_duration;
+                                                                                                ?>"></td>
                             </tr>
                             <td></td>
                             <td></td>
@@ -101,65 +103,12 @@ require "controller/updateCourseController.php";
                         </table>
                     </center>
                     <center>
-                    <div id="container"></div>
-                    <!-- Container to hold the dynamically added divs -->
-                    <input type="submit" id="saveButton" class="saveButton" value="Save course Change" name="save_co_change"></button>
-                </center><!-- Button save change of the course -->
+                        <div id="container"></div>
+                        <!-- Container to hold the dynamically added divs -->
+                        <input type="submit" id="saveButton" class="saveButton" value="Save course Change" name="save_co_change">
+                    </center><!-- Button save change of the course -->
                 </div>
-
-                <br>
-                <center> Edit Lesson Data</center>
-
-                <div class="divPad" id="lessDiv">
-                    <center>
-                        <table class="tabWid">
-                            <tr>
-                                <td><label for="le_title">Edit Lesson Titel:</label></td>
-                                <td><input type="text" name="new_les_title" class="inWid" value="<?php
-                                                                                            getLessonsDetails();
-                                                                                            echo $les_title;
-
-                                                                                            ?>"></td>
-                            <tr>
-
-                                <td><label for="conter">Edit Lesson Content:</label></td>
-                                <td><textarea type="text" name="new_les_content" class="inWid"><?php
-                                                                                        echo $les_content;
-                                                                                        ?></textarea></td>
-                            </tr>
-                            <tr>
-                                <td><label for="vid_url">Change The Video URL:</label></td>
-                                <td><input type="text" name="new_les_vid_url" class="inWid" value="<?php
-                                                                                            echo $les_vid_url;
-                                                                                            ?>"></td>
-                            <tr>
-                            <tr>
-                                <td><label for="image">Add or Chnge External Resours if you have :</label> </td>
-                                <td><input type="file" name="new_ext_res" class="inWid" value=""><?php
-                                                                                            echo $les_ext_res;
-                                                                                            ?></td>
-                            </tr>
-                            <br>
-                            <tr>
-                                <td></td>
-                                <center>
-                                    <!-- <td collapse="2"><button name="submit" class="btn btn-primary border-radius dropdown-item-right">Add</button></td> -->
-                                </center>
-                            </tr>
-                        </table>
-                    </center>
-                </div>
-                <center>
-                    <div id="container"></div>
-                    <!-- Container to hold the dynamically added divs -->
-                    <input type="submit" id="saveButton" class="saveButton" value="Save lesson Change" name="save_les_change"></button>
-                </center><!-- Button save change of the lessson -->
-                <!-- </div> -->
             </div>
-            <!-- </div> -->
-            <!-- <center>
-                <input type="submit" id="saveButton" class="saveButton" value="Save Change" name="save_change"></button>
-            </center> -->
 
         </form>
     </div>

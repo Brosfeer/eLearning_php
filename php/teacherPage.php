@@ -237,7 +237,7 @@ if (isset($_POST['co_title'])) {
     <div class="row g-4 justify-content-center">
         <!-- //////////////////////////////////////////////////////////////////////// -->
         <div class="na col-lg-4 col-md-6 wow fadeInUp hoverable" data-wow-delay="0.1s">
-            <form id="contentForm1" method="POST" action="courses.php">
+            <form id="contentForm1" method="POST" action="updateCourseVeiw.php">
                 <div class="course-item bg-light">
                     <div class="position-relative overflow-hidden">
                         <a href="#">
@@ -265,17 +265,21 @@ if (isset($_POST['co_title'])) {
                             foreach ($data as $index => $row) {
                                 if ($index == 0) {
                                     echo $row['title'];
+                                    echo "<input type='hidden' name='course_id' value='";
+                                    foreach ($data as $index => $row) {
+                                        if ($index == 0) {
+                                            echo $row['course_id'];
+                                        }
+                                    }
+                                    echo "'>";
+                                    echo "<br><br>";
+                                    echo "<button type='submit' class='btn btn-primary' name='submit' onclick='submitForm('contentForm1')'>Edit The Course</button><br><br>";
                                 }
                             }
                             ?>
                         </div>
-                        <form action="updateCourseVeiw.php">
-                        <button type="submit" class="btn btn-primary" name="submit" onclick="submitForm('contentForm1')">Subscription</button><br><br>
-                        <?php
-                            $_SESSION['course_id']=$row['course_id'];
-                            ?>
-                        </form><br><br>
-                        
+                        <br><br>
+
                         <div class="description"> <?php
                                                     foreach ($data as $index => $row) {
                                                         if ($index == 0) {
@@ -312,7 +316,7 @@ if (isset($_POST['co_title'])) {
         <!-- //////////////////////////////////////////////////////////////////////// -->
         <!-- //////////////////////////////////////////////////////////////////////// -->
         <div class="na col-lg-4 col-md-6 wow fadeInUp hoverable" data-wow-delay="0.1s">
-            <form id="contentForm2" method="POST" action="courses.php">
+            <form id="contentForm2" method="POST" action="updateCourseVeiw.php">
                 <div class="course-item bg-light">
                     <div class="position-relative overflow-hidden">
                         <a href="#">
@@ -340,16 +344,20 @@ if (isset($_POST['co_title'])) {
                             foreach ($data as $index => $row) {
                                 if ($index == 1) {
                                     echo $row['title'];
+                                    echo "<input type='hidden' name='course_id' value='";
+                                    foreach ($data as $index => $row) {
+                                        if ($index == 1) {
+                                            echo $row['course_id'];
+                                        }
+                                    }
+                                    echo "'>";
+                                    echo "<br><br>";
+                                    echo "<button type='submit' class='btn btn-primary' name='submit' onclick='submitForm('contentForm2')'>Edit The Course</button><br><br>";
                                 }
                             }
                             ?>
                         </div>
-                        <form action="updateCourseVeiw.php">
-                            <button type="submit" class="btn btn-primary" name="submit" >Subscription</button><br><br>
-                            <?php
-                            $_SESSION['course_id'] = $row['course_id'];
-                            ?>
-                        </form><br><br>
+                        <br><br>
                         <div class="description"> <?php
                                                     foreach ($data as $index => $row) {
                                                         if ($index == 1) {
@@ -386,7 +394,7 @@ if (isset($_POST['co_title'])) {
         <!-- //////////////////////////////////////////////////////////////////////// -->
         <!-- //////////////////////////////////////////////////////////////////////// -->
         <div class="na col-lg-4 col-md-6 wow fadeInUp hoverable" data-wow-delay="0.1s">
-            <form id="contentForm3" method="POST" action="courses.php">
+            <form id="contentForm3" method="POST" action="updateCourseVeiw.php">
                 <div class="course-item bg-light">
                     <div class="position-relative overflow-hidden">
                         <a href="#">
@@ -414,16 +422,20 @@ if (isset($_POST['co_title'])) {
                             foreach ($data as $index => $row) {
                                 if ($index == 2) {
                                     echo $row['title'];
+                                    echo "<input type='hidden' name='course_id' value='";
+                                    foreach ($data as $index => $row) {
+                                        if ($index == 2) {
+                                            echo $row['course_id'];
+                                        }
+                                    }
+                                    echo "'>";
+                                    echo "<br><br>";
+                                    echo "<button type='submit' class='btn btn-primary' name='submit' onclick='submitForm('contentForm3')'>Edit The Course</button><br><br>";
                                 }
                             }
                             ?>
                         </div>
-                        <form action="updateCourseVeiw.php">
-                            <button type="submit" class="btn btn-primary" name="submit" >Subscription</button><br><br>
-                            <?php
-                            $_SESSION['course_id'] = $row['course_id'];
-                            ?>
-                        </form><br><br>
+                        <br><br>
 
                         <div class="description"> <?php
                                                     foreach ($data as $index => $row) {
@@ -465,7 +477,7 @@ if (isset($_POST['co_title'])) {
     <div class="row g-4 justify-content-center">
         <!-- //////////////////////////////////////////////////////////////////////// -->
         <div class="na col-lg-4 col-md-6 wow fadeInUp hoverable" data-wow-delay="0.1s">
-            <form id="contentForm4" method="POST" action="courses.php">
+            <form id="contentForm4" method="POST" action="updateCourseVeiw.php">
                 <div class="course-item bg-light">
                     <div class="position-relative overflow-hidden">
                         <a href="#">
@@ -493,17 +505,20 @@ if (isset($_POST['co_title'])) {
                             foreach ($data as $index => $row) {
                                 if ($index == 3) {
                                     echo $row['title'];
-                                    $_SESSION['course_id'] = $row['course_id'];
+                                    echo "<input type='hidden' name='course_id' value='";
+                                    foreach ($data as $index => $row) {
+                                        if ($index == 3) {
+                                            echo $row['course_id'];
+                                        }
+                                    }
+                                    echo "'>";
+                                    echo "<br><br>";
+                                    echo "<button type='submit' class='btn btn-primary' name='submit' onclick='submitForm('contentForm4')'>Edit The Course</button><br><br>";
                                 }
                             }
                             ?>
                         </div>
-                        <form action="updateCourseVeiw.php">
-                            <button type="submit" class="btn btn-primary" name="submit" >Subscription</button><br><br>
-                            <?php
-                            $_SESSION['course_id'] = $row['course_id'];
-                            ?>
-                        </form><br><br>
+                        <br><br>
 
                         <div class="description"> <?php
                                                     foreach ($data as $index => $row) {
@@ -541,7 +556,7 @@ if (isset($_POST['co_title'])) {
         <!-- //////////////////////////////////////////////////////////////////////// -->
         <!-- //////////////////////////////////////////////////////////////////////// -->
         <div class="na col-lg-4 col-md-6 wow fadeInUp hoverable" data-wow-delay="0.1s">
-            <form id="contentForm5" method="POST" action="courses.php">
+            <form id="contentForm5" method="POST" action="updateCourseVeiw.php">
                 <div class="course-item bg-light">
                     <div class="position-relative overflow-hidden">
                         <a href="#">
@@ -569,16 +584,20 @@ if (isset($_POST['co_title'])) {
                             foreach ($data as $index => $row) {
                                 if ($index == 4) {
                                     echo $row['title'];
+                                    echo "<input type='hidden' name='course_id' value='";
+                                    foreach ($data as $index => $row) {
+                                        if ($index == 4) {
+                                            echo $row['course_id'];
+                                        }
+                                    }
+                                    echo "'>";
+                                    echo "<br><br>";
+                                    echo "<button type='submit' class='btn btn-primary' name='submit' onclick='submitForm('contentForm5')'>Edit The Course</button><br><br>";
                                 }
                             }
                             ?>
                         </div>
-                        <form action="updateCourseVeiw.php">
-                            <button type="submit" class="btn btn-primary" name="submit">Subscription</button><br><br>
-                            <?php
-                            $_SESSION['course_id'] = $row['course_id'];
-                            ?>
-                        </form><br><br>
+                        <br><br>
                         <div class="description"> <?php
                                                     foreach ($data as $index => $row) {
                                                         if ($index == 4) {
@@ -615,7 +634,7 @@ if (isset($_POST['co_title'])) {
         <!-- //////////////////////////////////////////////////////////////////////// -->
         <!-- //////////////////////////////////////////////////////////////////////// -->
         <div class="na col-lg-4 col-md-6 wow fadeInUp hoverable" data-wow-delay="0.1s">
-            <form id="contentForm6" method="POST" action="courses.php">
+            <form id="contentForm6" method="POST" action="updateCourseVeiw.php">
                 <div class="course-item bg-light">
                     <div class="position-relative overflow-hidden">
                         <a href="#">
@@ -643,17 +662,21 @@ if (isset($_POST['co_title'])) {
                             foreach ($data as $index => $row) {
                                 if ($index == 5) {
                                     echo $row['title'];
+                                    echo "<input type='hidden' name='course_id' value='";
+                                    foreach ($data as $index => $row) {
+                                        if ($index == 5) {
+                                            echo $row['course_id'];
+                                        }
+                                    }
+                                    echo "'>";
+                                    echo "<br><br>";
+                                    echo "<button type='submit' class='btn btn-primary' name='submit' onclick='submitForm('contentForm6')'>Edit The Course</button><br><br>";
                                 }
                             }
                             ?>
                         </div>
 
-                        <form action="updateCourseVeiw.php">
-                            <button type="submit" class="btn btn-primary" name="submit" >Subscription</button>
-                            <?php
-                            $_SESSION['course_id'] = $row['course_id'];
-                            ?>
-                        </form><br><br>
+                       <br><br>
                         <div class="description"> <?php
                                                     foreach ($data as $index => $row) {
                                                         if ($index == 5) {
@@ -689,7 +712,7 @@ if (isset($_POST['co_title'])) {
         </div>
         <!-- //////////////////////////////////////////////////////////////////////// -->
         <div class="na col-lg-4 col-md-6 wow fadeInUp hoverable" data-wow-delay="0.1s">
-            <form id="contentForm7" method="POST" action="courses.php">
+            <form id="contentForm7" method="POST" action="updateCourseVeiw.php">
                 <div class="course-item bg-light">
                     <div class="position-relative overflow-hidden">
                         <a href="#">
@@ -717,13 +740,20 @@ if (isset($_POST['co_title'])) {
                             foreach ($data as $index => $row) {
                                 if ($index == 6) {
                                     echo $row['title'];
-                                    $_SESSION['course_id'] = $row['course_id'];
+                                    echo "<input type='hidden' name='course_id' value='";
+                                    foreach ($data as $index => $row) {
+                                        if ($index == 6) {
+                                            echo $row['course_id'];
+                                        }
+                                    }
+                                    echo "'>";
+                                    echo "<br><br>";
+                                    echo "<button type='submit' class='btn btn-primary' name='submit' onclick='submitForm('contentForm7')'>Edit The Course</button><br><br>";
                                 }
                             }
                             ?>
                         </div>
 
-                        <button type="submit" class="btn btn-primary" name="submit" onclick="submitForm('contentForm7')">Subscription</button><br><br>
                         <div class="description"> <?php
                                                     foreach ($data as $index => $row) {
                                                         if ($index == 6) {

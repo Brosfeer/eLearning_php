@@ -20,7 +20,7 @@ if (isset($_POST['submit'])) {
     $result = mysqli_stmt_get_result($stmt);
     if (mysqli_num_rows($result) >0) {
         $row = mysqli_fetch_assoc($result);
-        
+        if($row['Prev'] == "Grant"){
         if ($row['Password'] == $password) {
             // تخزين user_id في الـ session
              $user_id =$_SESSION['user_id'] = $row['user_id'];
@@ -43,6 +43,14 @@ if (isset($_POST['submit'])) {
         } else {
             echo "اسم المستخدم أو كلمة المرور غير صحيحة.";
         }
+    }else{
+        $nextPage = "Login.php";
+
+        echo "<script>window.location.href='$nextPage';</script>";
+        echo "انت محظور ";
+
+
+    }
     } else {
         echo "اسم المستخدم أو كلمة المرور غير صحيحة.";
     }

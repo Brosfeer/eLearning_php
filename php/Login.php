@@ -9,7 +9,7 @@ require "../header.html";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Login Page</title>
     <link href="../img/favicon.ico" rel="icon">
 
     <!-- Google Web Fonts -->
@@ -30,7 +30,11 @@ require "../header.html";
 
     <!-- Template Stylesheet -->
     <link href="../css/style.css" rel="stylesheet">
-
+<style>
+    .bgcolor{
+        background: #06BBCC;
+    }
+</style>
 </head>
 
 <body>
@@ -40,10 +44,10 @@ require "../header.html";
         <form id="signin-form" action="Login.php" method="POST">
             <input type="text" name="user_name" placeholder="اسم المستخدم">
             <input type="password" name="password" placeholder="كلمة المرور" required>
-            <input type="submit" class="submit-log" name="submit" value="تسجيل الدخول">
+            <input type="submit" class=" submit-log bgcolor" name="submit" value="تسجيل الدخول">
         </form>
         <p id="error-message"><?php include 'validat.php'?></p>
-        <p>Don't have an account? <a href="SignUp.php">Sign up</a></p>
+        <p>Don't have an account? <a href="SignUp.php" style="color: #000;">Sign up</a></p>
     </div>
     <!-- Carousel End -->
 </body>

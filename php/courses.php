@@ -36,13 +36,7 @@ if (isset($_SESSION["user_id"])) {
         echo "</tr>";
 
         // العرض في <div> حسب الفهرس المحدد
-        if ($index == 2) { // الفهرس المحدد
-            echo "<div>title: " . $row['title'] . "</div>";
-            echo "<div>Description: " . $row['Description'] . "</div>";
-            echo "<div>course_id: " . $row['course_id'] . "</div>";
-            echo "<div>courses_image: " . $row['courses_image'] . "</div>";
-            echo "<div>Duration: " . $row['Duration'] . "</div>";
-        }
+     
     }
     // echo "</table>";
 } else {
